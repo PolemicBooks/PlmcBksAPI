@@ -1,3 +1,5 @@
+## Uso
+
 A API atualmente pode ser usada de 3 formas:
 
 1. Obtenção de informações sobre livros.
@@ -329,6 +331,14 @@ Cada um dos métodos citados anteriormente suportam os 3 seguintes parâmetros: 
 - O `query` deve receber um termo que será usado como base pra realizar a busca.
 - O `page` é usado para controlar a paginação. O valor dele deve ser sempre um número igual ou superior a zero e igual ou inferior ao valor da chave `total_pages`. Quando não presente na requisição, seu valor padrão é `0`.
 - O `max_results` é usado para controlar a quantidade máxima de resultados retornados. O valor dele deve sempre ser superior a zero. Quando não presente na requisição, seu valor padrão é `15`.
+
+Você pode obter uma lista contendo todos os autores, editoras, tipos e categorias disponíveis usando os seguintes métodos:
+
+- `/g/authors`
+- `/g/publishers`
+- `/g/narrators`
+- `/g/types`
+- `/g/categories`
 
 ### Download de documentos e imagens
 
