@@ -1,0 +1,8 @@
+[Unit]
+Description=pbapi socket
+
+[Socket]
+ListenStream=/run/pbapi.sock
+
+[Install]
+WantedBy=sockets.target

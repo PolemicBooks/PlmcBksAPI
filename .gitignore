@@ -1,0 +1,6 @@
+venv/
+hidden_service/
+__pycache__/
+files/
+scripts/_config.py
+core/_config.py

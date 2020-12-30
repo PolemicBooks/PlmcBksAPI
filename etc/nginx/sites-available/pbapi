@@ -1,0 +1,189 @@
+server {
+
+    listen 443 ssl http2;
+    server_name api.polemicnews.com;
+
+    ssl_certificate /etc/letsencrypt/live/api.polemicnews.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/api.polemicnews.com/privkey.pem;
+    ssl_session_timeout 10m;
+    ssl_session_cache shared:MozSSL:10m;
+    ssl_session_tickets off;
+    
+    ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+    
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+    
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    
+    ssl_trusted_certificate /etc/letsencrypt/live/api.polemicnews.com/chain.pem;
+
+	resolver 1.0.0.1:53 valid=60s ipv6=off;
+	resolver_timeout 5s;
+
+	keepalive_timeout 60;
+
+    location / {
+
+        add_header Access-Control-Allow-Methods "*";
+        add_header Access-Control-Allow-Headers "*";
+        add_header Access-Control-Allow-Origin "*";
+        add_header Access-Control-Expose-Headers "*";
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Cross-Origin-Embedder-Policy "require-corp";
+        add_header Cross-Origin-Opener-Policy "same-origin";
+        add_header Cross-Origin-Resource-Policy "cross-origin";
+        add_header Onion-Location http://<your-onion-address>.onion$request_uri;
+        add_header Content-Language "pt-BR, pt-PT";
+        add_header X-Content-Type-Options "nosniff";
+        add_header Referrer-Policy "no-referrer";
+        add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content";
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
+        add_header Strict-Transport-Security "max-age=31536000";
+
+        index index.html;
+        root /home/pbapi/pbapi/templates/;
+
+    }
+
+    location ~ ^/(?:l|d|s|g)/ {
+
+        add_header Access-Control-Allow-Methods "*";
+        add_header Access-Control-Allow-Headers "*";
+        add_header Access-Control-Allow-Origin "*";
+        add_header Access-Control-Expose-Headers "*";
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Cross-Origin-Embedder-Policy "require-corp";
+        add_header Cross-Origin-Opener-Policy "same-origin";
+        add_header Cross-Origin-Resource-Policy "cross-origin";
+        add_header Onion-Location http://<your-onion-address>.onion$request_uri;
+        add_header Content-Language "pt-BR, pt-PT";
+        add_header X-Content-Type-Options "nosniff";
+        add_header Referrer-Policy "no-referrer";
+        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content";
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
+        add_header Strict-Transport-Security "max-age=31536000";
+
+        proxy_set_header Host $http_host;
+        proxy_pass http://unix:/run/pbapi.sock;
+
+    }
+
+    location /dumps {
+
+        add_header Access-Control-Allow-Methods "*";
+        add_header Access-Control-Allow-Headers "*";
+        add_header Access-Control-Allow-Origin "*";
+        add_header Access-Control-Expose-Headers "*";
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Cross-Origin-Embedder-Policy "require-corp";
+        add_header Cross-Origin-Opener-Policy "same-origin";
+        add_header Cross-Origin-Resource-Policy "cross-origin";
+        add_header Onion-Location http://<your-onion-address>.onion$request_uri;
+        add_header Content-Language "pt-BR, pt-PT";
+        add_header X-Content-Type-Options "nosniff";
+        add_header Referrer-Policy "no-referrer";
+        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content";
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
+        add_header Strict-Transport-Security "max-age=31536000";
+
+        autoindex on;
+        autoindex_exact_size off;
+        autoindex_localtime on;
+        
+        alias /home/pbapi/pbapi/files/dumps;
+    
+    }
+
+    client_max_body_size 150k;
+    
+}
+
+server {
+
+    listen 80;
+    server_name api.polemicnews.com;
+
+    add_header Referrer-Policy "no-referrer";
+
+    client_max_body_size 150k;
+
+    return 301 https://$host$request_uri;
+
+}
+
+server {
+
+    listen unix:/var/run/pbapi-tor.sock;
+
+    location / {
+
+        add_header Access-Control-Allow-Methods "*";
+        add_header Access-Control-Allow-Headers "*";
+        add_header Access-Control-Allow-Origin "*";
+        add_header Access-Control-Expose-Headers "*";
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Cross-Origin-Embedder-Policy "require-corp";
+        add_header Cross-Origin-Opener-Policy "same-origin";
+        add_header Cross-Origin-Resource-Policy "cross-origin";
+        add_header Content-Language "pt-BR, pt-PT";
+        add_header X-Content-Type-Options "nosniff";
+        add_header Referrer-Policy "no-referrer";
+        add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content";
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
+
+        index index.html;
+        root /home/pbapi/pbapi/templates/;
+
+    }
+
+    location ~ ^/(?:l|d|s|g)/ {
+
+        add_header Access-Control-Allow-Methods "*";
+        add_header Access-Control-Allow-Headers "*";
+        add_header Access-Control-Allow-Origin "*";
+        add_header Access-Control-Expose-Headers "*";
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Cross-Origin-Embedder-Policy "require-corp";
+        add_header Cross-Origin-Opener-Policy "same-origin";
+        add_header Cross-Origin-Resource-Policy "cross-origin";
+        add_header Content-Language "pt-BR, pt-PT";
+        add_header X-Content-Type-Options "nosniff";
+        add_header Referrer-Policy "no-referrer";
+        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content";
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
+
+        proxy_set_header Host $http_host;
+        proxy_pass http://unix:/run/pbapi.sock;
+
+    }
+
+    location /dumps {
+
+        add_header Access-Control-Allow-Methods "*";
+        add_header Access-Control-Allow-Headers "*";
+        add_header Access-Control-Allow-Origin "*";
+        add_header Access-Control-Expose-Headers "*";
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Cross-Origin-Embedder-Policy "require-corp";
+        add_header Cross-Origin-Opener-Policy "same-origin";
+        add_header Cross-Origin-Resource-Policy "cross-origin";
+        add_header Content-Language "pt-BR, pt-PT";
+        add_header X-Content-Type-Options "nosniff";
+        add_header Referrer-Policy "no-referrer";
+        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content";
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
+
+        autoindex on;
+        autoindex_exact_size off;
+        autoindex_localtime on;
+        
+        alias /home/pbapi/pbapi/files/dumps;
+    
+    }
+
+    client_max_body_size 150k;
+    
+}

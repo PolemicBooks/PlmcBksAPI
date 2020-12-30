@@ -1,0 +1,13 @@
+{
+  "error_media_too_large": "this media is too large",
+  "error_media_not_found": "this media does not exists",
+  "error_message_not_found": "this message was not found",
+  "error_no_results_found": "no results found",
+  "error_list_out_of_range": "list index out of range",
+  "error_download_unavailable": "this media cannot be downloaded",
+  "error_category_not_found": "this category was not found",
+  "error_author_not_found": "this author was not found",
+  "error_narrator_not_found": "this narrator was not found",
+  "error_publisher_not_found": "this publisher was not found",
+  "error_type_not_found": "this type was not found"
+}

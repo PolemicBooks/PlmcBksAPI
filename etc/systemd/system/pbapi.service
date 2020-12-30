@@ -1,0 +1,16 @@
+[Unit]
+Description=pbapi daemon
+Requires=pbapi.socket
+After=network.target
+
+[Service]
+User=pbapi
+Group=www-data
+WorkingDirectory=/home/pbapi/pbapi
+ExecStart=/home/pbapi/pbapi/venv/bin/gunicorn \
+    --workers '4' \
+    --bind 'unix:/run/pbapi.sock' \
+    'wsgi:app'
+
+[Install]
+WantedBy=multi-user.target
