@@ -25,7 +25,7 @@ Você pode utilizar os seguintes métodos para buscar informações sobre livros
 - `/s/type`
 - `/s/category`
 
-Os métodos são alto descritíveis.
+Os métodos são auto descritíveis.
 
 - O método `/s/title` retornará livros em que o termo enviado corresponda ao título da obra.
 - O método `/s/author` retornará livros em que o termo enviado corresponda ao autor da obra.
