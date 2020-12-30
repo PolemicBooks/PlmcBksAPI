@@ -39,9 +39,9 @@ Requisição:
 
 ```bash
 curl --url "https://api.polemicnews.com/s/title" \
-	--data-urlencode "query=Python" \
-	--data-urlencode "max_results=1" \
-	--get
+    --data-urlencode "query=Python" \
+    --data-urlencode "max_results=1" \
+    --get
 ```
 
 Resposta:
@@ -136,9 +136,9 @@ Requisição:
 
 ```bash
 curl --url "https://api.polemicnews.com/s/author" \
-	--data-urlencode "query=Charles Darwin" \
-	--data-urlencode "max_results=1" \
-	--get
+    --data-urlencode "query=Charles Darwin" \
+    --data-urlencode "max_results=1" \
+    --get
 ```
 
 Resposta:
@@ -233,9 +233,9 @@ Requisição:
 
 ```bash
 curl --url "https://api.polemicnews.com/s/publisher" \
-	--data-urlencode "query=Ubook" \
-	--data-urlencode "max_results=1" \
-	--get
+    --data-urlencode "query=Ubook" \
+    --data-urlencode "max_results=1" \
+    --get
 ```
 
 Resposta:
@@ -352,7 +352,7 @@ Requisição:
 
 ```bash
 curl --url "https://api.polemicnews.com/d/116308" \
-	--verbose
+    --verbose
 ```
 
 A identificação numérica após o `/d/` é o ID da mensagem enviada no canal do Telegram. 
