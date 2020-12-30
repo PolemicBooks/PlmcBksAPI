@@ -35,8 +35,7 @@ class Books:
 					if document["id"] == message_id:
 						return Document(document)
 	
-	@staticmethod
-	def handle_results(results, page, max_results):
+	def handle_results(self, results, page, max_results):
 		if not results:
 			return (dict(error=self.errors.error_no_results_found), 400)
 		
