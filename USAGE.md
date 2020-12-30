@@ -8,11 +8,11 @@ A API atualmente pode ser usada de 3 formas:
 
 ### Obtenção de informações sobre livros
 
-Você baixar os arquivos contendo informações sobre todos os livros já publicados no canal em:
+Você pode baixar os arquivos contendo informações sobre todos os livros já publicados no canal em:
 
 - https://api.polemicnews.com/dumps
 
-Nós disponibilizamos essas informações nos formatos `json`, `csv` e `xlsx`. Eles também serão atualizados sempre que houver algum novo conteúdo no canal.
+Nós disponibilizamos essas informações nos formatos `json`, `csv` e `xlsx`. Esses arquivos serão atualizados sempre que houver algum novo conteúdo no canal.
 
 ### Buscas com base no título, categoria e entre outros
 
@@ -39,9 +39,9 @@ Requisição:
 
 ```bash
 curl --url "https://api.polemicnews.com/s/title" \
-    --data-urlencode "query=Python" \
-    --data-urlencode "max_results=1" \
-    --get
+	--data-urlencode "query=Python" \
+	--data-urlencode "max_results=1" \
+	--get
 ```
 
 Resposta:
@@ -136,9 +136,9 @@ Requisição:
 
 ```bash
 curl --url "https://api.polemicnews.com/s/author" \
-    --data-urlencode "query=Charles Darwin" \
-    --data-urlencode "max_results=1" \
-    --get
+	--data-urlencode "query=Charles Darwin" \
+	--data-urlencode "max_results=1" \
+	--get
 ```
 
 Resposta:
@@ -233,9 +233,9 @@ Requisição:
 
 ```bash
 curl --url "https://api.polemicnews.com/s/publisher" \
-    --data-urlencode "query=Ubook" \
-    --data-urlencode "max_results=1" \
-    --get
+	--data-urlencode "query=Ubook" \
+	--data-urlencode "max_results=1" \
+	--get
 ```
 
 Resposta:
@@ -352,7 +352,7 @@ Requisição:
 
 ```bash
 curl --url "https://api.polemicnews.com/d/116308" \
-    --verbose
+	--verbose
 ```
 
 A identificação numérica após o `/d/` é o ID da mensagem enviada no canal do Telegram. 
