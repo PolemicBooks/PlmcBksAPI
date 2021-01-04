@@ -1,5 +1,6 @@
 import json
 import time
+import os
 
 import pandas
 from pyrogram import Client
@@ -14,8 +15,6 @@ books = []
 message_id = 0
 
 message_ids = []
-
-files_info = []
 
 book = {}
 
