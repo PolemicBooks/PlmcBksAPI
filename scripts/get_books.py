@@ -167,6 +167,8 @@ while message_id < 135000:
 
 books.append(book)
 
+for file in glob.glob(os.path.join(DUMPS_DIRECTORY, "/*")):
+	os.remove(file)
 
 categories, types, authors, narrators, publishers = (
 	[], [], [], [], []
@@ -211,15 +213,13 @@ with open(file=os.path.join(BOOKS_DIRECTORY, "publishers.json"), mode="w") as fi
 with open(file=os.path.join(BOOKS_DIRECTORY, "books.json"), mode="w") as file:
 	file.write(json.dumps(books))
 
-date = time.strftime("%Y-%m-%d", time.localtime(int(time.time())))
-
-with open(file=os.path.join(DUMPS_DIRECTORY, f"books_{date}.json"), mode="w") as file:
+with open(file=os.path.join(DUMPS_DIRECTORY, "books.json"), mode="w") as file:
 	file.write(json.dumps(books))
 
 pd = pandas.read_json(os.path.join(BOOKS_DIRECTORY, "books.json"))
 
-pd.to_excel(os.path.join(DUMPS_DIRECTORY, f"books_{date}.xlsx"))
-pd.to_csv(os.path.join(DUMPS_DIRECTORY, f"books_{date}.csv"))
+pd.to_excel(os.path.join(DUMPS_DIRECTORY, "books.xlsx"))
+pd.to_csv(os.path.join(DUMPS_DIRECTORY, "books.csv"))
 
 with open(file=os.path.join(MESSAGES_DIRECTORY, "message_ids.json"), mode="w") as file:
 	file.write(json.dumps(message_ids))

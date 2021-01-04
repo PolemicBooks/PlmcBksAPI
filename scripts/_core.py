@@ -6,7 +6,7 @@ def get_author(text):
 	result = re.findall(r"\n\*\*Autor\*\*:\s__(.+)__", text)
 	
 	if result:
-		return result[0]
+		return result[0].strip()
 
 
 def get_publisher(text):
@@ -14,7 +14,7 @@ def get_publisher(text):
 	result = re.findall(r"\n\*\*Editora\*\*:\s__(.+)__", text)
 	
 	if result:
-		return result[0]
+		return result[0].strip()
 
 
 def get_book_type(text):
@@ -22,7 +22,7 @@ def get_book_type(text):
 	result = re.findall(r"\n\*\*Tipo\*\*:\s__(.+)__", text)
 	
 	if result:
-		return result[0]
+		return result[0].strip()
 
 
 def get_category(text):
@@ -30,7 +30,7 @@ def get_category(text):
 	result = re.findall(r"\n\*\*Categoria\*\*:\s__(.+)__", text)
 	
 	if result:
-		return result[0]
+		return result[0].strip()
 
 
 def get_narrator(text):
@@ -38,7 +38,7 @@ def get_narrator(text):
 	result = re.findall(r"\n\*\*Narrador\*\*:\s__(.+)__", text)
 	
 	if result:
-		return result[0]
+		return result[0].strip()
 
 
 def get_duration(text):
@@ -46,5 +46,5 @@ def get_duration(text):
 	result = re.findall(r"\n\*\*Duração\*\*:\s__(.+)__", text)
 	
 	if result:
-		return result[0]
+		return result[0].strip()
 
