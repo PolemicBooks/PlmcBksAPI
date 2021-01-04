@@ -3,6 +3,7 @@ import time
 
 import pandas
 from pyrogram import Client
+from unidecode import unidecode
 
 from _config import *
 from _core import *
@@ -14,6 +15,8 @@ message_id = 0
 
 message_ids = []
 
+files_info = []
+
 book = {}
 
 client = Client(**PYROGRAM_OPTIONS)
@@ -24,7 +27,7 @@ while message_id < 135000:
 	message_id += 1
 	
 	# Essas mensagens não são publicações de livros
-	if message_id in (2, 10596, 10597, 13337):
+	if message_id in (2, 10596, 10597, 13337, 131117):
 		continue
 	
 	message = client.get_messages("@PolemicBooks", message_id)
@@ -52,6 +55,7 @@ while message_id < 135000:
 		book = {
 			"id": message.message_id,
 			"title": None if book_title is None else capitalize_words(book_title),
+			"title_ascii_lower": None if book_title is None else capitalize_words(unidecode(book_title)).lower(),
 			"type": book_type,
 			"category": None if category is None else category.replace("\\", "/"),
 			"duration": {
@@ -114,6 +118,7 @@ while message_id < 135000:
 		book = {
 			"id": message.message_id,
 			"title": None if book_title is None else capitalize_words(book_title),
+			"title_ascii_lower": None if book_title is None else capitalize_words(unidecode(book_title)).lower(),
 			"type": book_type,
 			"category": None if category is None else category.replace("\\", "/"),
 			"duration": {

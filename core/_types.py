@@ -78,8 +78,9 @@ class Books:
 				if query in book["title"]:
 					results.append(book)
 		else:
+			ascii_query_lower = unidecode(query).lower()
 			for book in self.books:
-				if query.lower() in unidecode(book["title"]).lower():
+				if ascii_query_lower in book["title_ascii_lower"]:
 					results.append(book)
 			
 		
