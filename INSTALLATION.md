@@ -10,7 +10,7 @@ apt-get --assume-yes install \
     'python3-pip' \
     'python3-setuptools'
     'python3-wheel' \
-	'git'
+    'git'
 ```
 
 Crie um novo usuário:
@@ -68,7 +68,8 @@ pip install --force-reinstall \
     --upgrade \
     'flask' \
     'gunicorn' \
-    'pyrogram[fast]' \
+    'pyrogram' \
+    'tgcrypto' \
     'pandas' \
     'pytelegrambotapi' \
     'unidecode'
