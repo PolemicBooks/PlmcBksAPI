@@ -70,7 +70,8 @@ pip install --force-reinstall \
     'gunicorn' \
     'pyrogram[fast]' \
     'pandas' \
-    'pytelegrambotapi'
+    'pytelegrambotapi' \
+    'unidecode'
 ```
 
 Inicie o servidor HTTP:

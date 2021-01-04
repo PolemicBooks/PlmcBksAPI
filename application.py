@@ -70,16 +70,17 @@ def handle_download(message_id):
 @app.route("/s/title", methods=["GET"])
 def handle_title_search():
 
-	query, page, max_results = (
+	query, page, max_results, exact_match = (
 		request.args.get("query", ""),
 		request.args.get("page"),
-		request.args.get("max_results")
+		request.args.get("max_results"),
+		request.args.get("exact_match", "no")
 	)
 	
 	max_results = convert_int(max_results, 15)
 	page = convert_int(page, 0)
 	
-	data, status = books.search_title(query, page, max_results)
+	data, status = books.search_title(query, page, max_results, exact_match)
 	
 	return (data, 200)
 

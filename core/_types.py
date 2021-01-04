@@ -1,3 +1,5 @@
+from unidecode import unidecode
+
 from ._utils import pagination
 
 class Books:
@@ -37,7 +39,7 @@ class Books:
 	
 	def handle_results(self, results, page, max_results):
 		if not results:
-			return (dict(error=self.errors.error_no_results_found), 400)
+			return (dict(error=self.errors.error_no_results_found), 404)
 		
 		pages = pagination(results, max_results)
 		
@@ -68,12 +70,18 @@ class Books:
 		
 		return (data, 200)
 	
-	def search_title(self, query, page, max_results):
+	def search_title(self, query, page, max_results, exact_match):
 		results = []
 		
-		for book in self.books:
-			if query in book["title"]:
-				results.append(book)
+		if exact_match == "yes":
+			for book in self.books:
+				if query in book["title"]:
+					results.append(book)
+		else:
+			for book in self.books:
+				if query.lower() in unidecode(book["title"]).lower():
+					results.append(book)
+			
 		
 		return self.handle_results(results, page, max_results)
 	
