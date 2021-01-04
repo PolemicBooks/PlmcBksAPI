@@ -20,10 +20,10 @@ server {
     
     ssl_trusted_certificate /etc/letsencrypt/live/api.polemicnews.com/chain.pem;
 
-	resolver 1.0.0.1:53 valid=60s ipv6=off;
-	resolver_timeout 5s;
+    resolver 1.0.0.1:53 valid=60s ipv6=off;
+    resolver_timeout 5s;
 
-	keepalive_timeout 60;
+    keepalive_timeout 60;
 
     location / {
 
@@ -39,7 +39,8 @@ server {
         add_header Content-Language "pt-BR, pt-PT";
         add_header X-Content-Type-Options "nosniff";
         add_header Referrer-Policy "no-referrer";
-        add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content";
+        add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content; upgrade-insecure-requests";
+        add_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), layout-animations=(), legacy-image-formats=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), oversized-images=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), vr=(), wake-lock=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()";
         add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
         add_header Strict-Transport-Security "max-age=31536000";
         add_header Alt-Svc 'h2=":443"; ma=2592000; persist=1';
@@ -63,7 +64,8 @@ server {
         add_header Content-Language "pt-BR, pt-PT";
         add_header X-Content-Type-Options "nosniff";
         add_header Referrer-Policy "no-referrer";
-        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content";
+        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content; upgrade-insecure-requests";
+        add_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), layout-animations=(), legacy-image-formats=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), oversized-images=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), vr=(), wake-lock=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()";
         add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
         add_header Strict-Transport-Security "max-age=31536000";
         add_header Alt-Svc 'h2=":443"; ma=2592000; persist=1';
@@ -87,7 +89,8 @@ server {
         add_header Content-Language "pt-BR, pt-PT";
         add_header X-Content-Type-Options "nosniff";
         add_header Referrer-Policy "no-referrer";
-        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content";
+        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content; upgrade-insecure-requests";
+        add_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), layout-animations=(), legacy-image-formats=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), oversized-images=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), vr=(), wake-lock=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()";
         add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
         add_header Strict-Transport-Security "max-age=31536000";
         add_header Alt-Svc 'h2=":443"; ma=2592000; persist=1';
@@ -134,7 +137,8 @@ server {
         add_header Content-Language "pt-BR, pt-PT";
         add_header X-Content-Type-Options "nosniff";
         add_header Referrer-Policy "no-referrer";
-        add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content";
+        add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content; upgrade-insecure-requests";
+        add_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), layout-animations=(), legacy-image-formats=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), oversized-images=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), vr=(), wake-lock=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()";
         add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
 
         index index.html;
@@ -155,7 +159,8 @@ server {
         add_header Content-Language "pt-BR, pt-PT";
         add_header X-Content-Type-Options "nosniff";
         add_header Referrer-Policy "no-referrer";
-        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content";
+        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content; upgrade-insecure-requests";
+        add_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), layout-animations=(), legacy-image-formats=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), oversized-images=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), vr=(), wake-lock=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()";
         add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
 
         proxy_set_header Host $http_host;
@@ -176,7 +181,8 @@ server {
         add_header Content-Language "pt-BR, pt-PT";
         add_header X-Content-Type-Options "nosniff";
         add_header Referrer-Policy "no-referrer";
-        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content";
+        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content; upgrade-insecure-requests";
+        add_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), layout-animations=(), legacy-image-formats=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), oversized-images=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), vr=(), wake-lock=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()";
         add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
 
         autoindex on;
