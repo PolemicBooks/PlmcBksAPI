@@ -27,73 +27,72 @@ server {
 
     location / {
 
-        add_header Access-Control-Allow-Methods "*";
-        add_header Access-Control-Allow-Headers "*";
-        add_header Access-Control-Allow-Origin "*";
-        add_header Access-Control-Expose-Headers "*";
-        add_header Cache-Control "no-cache, no-store, must-revalidate";
-        add_header Cross-Origin-Embedder-Policy "require-corp";
-        add_header Cross-Origin-Opener-Policy "same-origin";
-        add_header Cross-Origin-Resource-Policy "cross-origin";
+        add_header Access-Control-Allow-Methods "*" always;
+        add_header Access-Control-Allow-Headers "*" always;
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header Access-Control-Expose-Headers "*" always;
+        add_header Access-Control-Max-Age "86400" always;
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+        add_header Cross-Origin-Embedder-Policy "require-corp" always;
+        add_header Cross-Origin-Opener-Policy "same-origin" always;
+        add_header Cross-Origin-Resource-Policy "cross-origin" always;
         add_header Onion-Location http://lcg3zdkqm74hbhnbh7vvh3iifbpdrqh6nill5g5cg4xazq7wrg5uejad.onion$request_uri;
-        add_header Content-Language "pt-BR, pt-PT";
-        add_header X-Content-Type-Options "nosniff";
-        add_header Referrer-Policy "no-referrer";
-        add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content; upgrade-insecure-requests";
-        add_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), layout-animations=(), legacy-image-formats=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), oversized-images=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), vr=(), wake-lock=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()";
-        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
-        add_header Strict-Transport-Security "max-age=31536000";
-        add_header Alt-Svc 'h2=":443"; ma=2592000; persist=1';
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "no-referrer" always;
+        add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'" always;
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp" always;
+        add_header Strict-Transport-Security "max-age=31536000" always;
 
         index index.html;
         root /home/pbapi/pbapi/templates/;
+
+        expires 7d;
 
     }
 
     location ~ ^/(?:l|d|s|g)/ {
 
-        add_header Access-Control-Allow-Methods "*";
-        add_header Access-Control-Allow-Headers "*";
-        add_header Access-Control-Allow-Origin "*";
-        add_header Access-Control-Expose-Headers "*";
-        add_header Cache-Control "no-cache, no-store, must-revalidate";
-        add_header Cross-Origin-Embedder-Policy "require-corp";
-        add_header Cross-Origin-Opener-Policy "same-origin";
-        add_header Cross-Origin-Resource-Policy "cross-origin";
+        add_header Access-Control-Allow-Methods "*" always;
+        add_header Access-Control-Allow-Headers "*" always;
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header Access-Control-Expose-Headers "*" always;
+        add_header Access-Control-Max-Age "86400" always;
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+        add_header Cross-Origin-Embedder-Policy "require-corp" always;
+        add_header Cross-Origin-Opener-Policy "same-origin" always;
+        add_header Cross-Origin-Resource-Policy "cross-origin" always;
         add_header Onion-Location http://lcg3zdkqm74hbhnbh7vvh3iifbpdrqh6nill5g5cg4xazq7wrg5uejad.onion$request_uri;
-        add_header Content-Language "pt-BR, pt-PT";
-        add_header X-Content-Type-Options "nosniff";
-        add_header Referrer-Policy "no-referrer";
-        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content; upgrade-insecure-requests";
-        add_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), layout-animations=(), legacy-image-formats=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), oversized-images=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), vr=(), wake-lock=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()";
-        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
-        add_header Strict-Transport-Security "max-age=31536000";
-        add_header Alt-Svc 'h2=":443"; ma=2592000; persist=1';
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "no-referrer" always;
+        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'" always;
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp" always;
+        add_header Strict-Transport-Security "max-age=31536000" always;
+        add_header Accept-Ranges "none" always;
 
         proxy_set_header Host $http_host;
         proxy_pass http://unix:/run/pbapi.sock;
+
+        expires 7d;
 
     }
 
     location /dumps {
 
-        add_header Access-Control-Allow-Methods "*";
-        add_header Access-Control-Allow-Headers "*";
-        add_header Access-Control-Allow-Origin "*";
-        add_header Access-Control-Expose-Headers "*";
-        add_header Cache-Control "no-cache, no-store, must-revalidate";
-        add_header Cross-Origin-Embedder-Policy "require-corp";
-        add_header Cross-Origin-Opener-Policy "same-origin";
-        add_header Cross-Origin-Resource-Policy "cross-origin";
+        add_header Access-Control-Allow-Methods "*" always;
+        add_header Access-Control-Allow-Headers "*" always;
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header Access-Control-Expose-Headers "*" always;
+        add_header Access-Control-Max-Age "86400" always;
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+        add_header Cross-Origin-Embedder-Policy "require-corp" always;
+        add_header Cross-Origin-Opener-Policy "same-origin" always;
+        add_header Cross-Origin-Resource-Policy "cross-origin" always;
         add_header Onion-Location http://lcg3zdkqm74hbhnbh7vvh3iifbpdrqh6nill5g5cg4xazq7wrg5uejad.onion$request_uri;
-        add_header Content-Language "pt-BR, pt-PT";
-        add_header X-Content-Type-Options "nosniff";
-        add_header Referrer-Policy "no-referrer";
-        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content; upgrade-insecure-requests";
-        add_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), layout-animations=(), legacy-image-formats=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), oversized-images=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), vr=(), wake-lock=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()";
-        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
-        add_header Strict-Transport-Security "max-age=31536000";
-        add_header Alt-Svc 'h2=":443"; ma=2592000; persist=1';
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "no-referrer" always;
+        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'" always;
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp" always;
+        add_header Strict-Transport-Security "max-age=31536000" always;
 
         autoindex on;
         autoindex_exact_size off;
@@ -112,7 +111,7 @@ server {
     listen 80;
     server_name api.polemicnews.com;
 
-    add_header Referrer-Policy "no-referrer";
+    add_header Referrer-Policy "no-referrer" always;
 
     client_max_body_size 150k;
 
@@ -126,64 +125,65 @@ server {
 
     location / {
 
-        add_header Access-Control-Allow-Methods "*";
-        add_header Access-Control-Allow-Headers "*";
-        add_header Access-Control-Allow-Origin "*";
-        add_header Access-Control-Expose-Headers "*";
-        add_header Cache-Control "no-cache, no-store, must-revalidate";
-        add_header Cross-Origin-Embedder-Policy "require-corp";
-        add_header Cross-Origin-Opener-Policy "same-origin";
-        add_header Cross-Origin-Resource-Policy "cross-origin";
-        add_header Content-Language "pt-BR, pt-PT";
-        add_header X-Content-Type-Options "nosniff";
-        add_header Referrer-Policy "no-referrer";
-        add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content; upgrade-insecure-requests";
-        add_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), layout-animations=(), legacy-image-formats=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), oversized-images=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), vr=(), wake-lock=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()";
-        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
+        add_header Access-Control-Allow-Methods "*" always;
+        add_header Access-Control-Allow-Headers "*" always;
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header Access-Control-Expose-Headers "*" always;
+        add_header Access-Control-Max-Age "86400" always;
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+        add_header Cross-Origin-Embedder-Policy "require-corp" always;
+        add_header Cross-Origin-Opener-Policy "same-origin" always;
+        add_header Cross-Origin-Resource-Policy "cross-origin" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "no-referrer" always;
+        add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'" always;
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp" always;
 
         index index.html;
         root /home/pbapi/pbapi/templates/;
+
+        expires 7d;
 
     }
 
     location ~ ^/(?:l|d|s|g)/ {
 
-        add_header Access-Control-Allow-Methods "*";
-        add_header Access-Control-Allow-Headers "*";
-        add_header Access-Control-Allow-Origin "*";
-        add_header Access-Control-Expose-Headers "*";
-        add_header Cache-Control "no-cache, no-store, must-revalidate";
-        add_header Cross-Origin-Embedder-Policy "require-corp";
-        add_header Cross-Origin-Opener-Policy "same-origin";
-        add_header Cross-Origin-Resource-Policy "cross-origin";
-        add_header Content-Language "pt-BR, pt-PT";
-        add_header X-Content-Type-Options "nosniff";
-        add_header Referrer-Policy "no-referrer";
-        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content; upgrade-insecure-requests";
-        add_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), layout-animations=(), legacy-image-formats=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), oversized-images=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), vr=(), wake-lock=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()";
-        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
+        add_header Access-Control-Allow-Methods "*" always;
+        add_header Access-Control-Allow-Headers "*" always;
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header Access-Control-Expose-Headers "*" always;
+        add_header Access-Control-Max-Age "86400" always;
+        add_header Cross-Origin-Embedder-Policy "require-corp" always;
+        add_header Cross-Origin-Opener-Policy "same-origin" always;
+        add_header Cross-Origin-Resource-Policy "cross-origin" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "no-referrer" always;
+        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'" always;
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp" always;
+        add_header Accept-Ranges "none" always;
 
         proxy_set_header Host $http_host;
         proxy_pass http://unix:/run/pbapi.sock;
+        
+        expires 7d;
 
     }
 
     location /dumps {
 
-        add_header Access-Control-Allow-Methods "*";
-        add_header Access-Control-Allow-Headers "*";
-        add_header Access-Control-Allow-Origin "*";
-        add_header Access-Control-Expose-Headers "*";
-        add_header Cache-Control "no-cache, no-store, must-revalidate";
-        add_header Cross-Origin-Embedder-Policy "require-corp";
-        add_header Cross-Origin-Opener-Policy "same-origin";
-        add_header Cross-Origin-Resource-Policy "cross-origin";
-        add_header Content-Language "pt-BR, pt-PT";
-        add_header X-Content-Type-Options "nosniff";
-        add_header Referrer-Policy "no-referrer";
-        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'; block-all-mixed-content; upgrade-insecure-requests";
-        add_header Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), layout-animations=(), legacy-image-formats=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), oversized-images=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), sync-xhr=(), usb=(), vr=(), wake-lock=(), screen-wake-lock=(), web-share=(), xr-spatial-tracking=()";
-        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp";
+        add_header Access-Control-Allow-Methods "*" always;
+        add_header Access-Control-Allow-Headers "*" always;
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header Access-Control-Expose-Headers "*" always;
+        add_header Access-Control-Max-Age "86400" always;
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+        add_header Cross-Origin-Embedder-Policy "require-corp" always;
+        add_header Cross-Origin-Opener-Policy "same-origin" always;
+        add_header Cross-Origin-Resource-Policy "cross-origin" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "no-referrer" always;
+        add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'" always;
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp" always;
 
         autoindex on;
         autoindex_exact_size off;
