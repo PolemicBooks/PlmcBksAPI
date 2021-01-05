@@ -71,6 +71,7 @@ pip install --force-reinstall \
     'pyrogram' \
     'tgcrypto' \
     'pandas' \
+    'openpyxl' \
     'pytelegrambotapi' \
     'unidecode'
 ```
