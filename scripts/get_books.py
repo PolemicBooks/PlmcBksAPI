@@ -1,5 +1,6 @@
 import json
 import time
+import glob
 import os
 
 import pandas
@@ -171,7 +172,7 @@ while message_id < 135000:
 
 books.append(book)
 
-for file in glob.glob(os.path.join(DUMPS_DIRECTORY, "/*")):
+for file in glob.glob(os.path.join(DUMPS_DIRECTORY, "*")):
 	os.remove(file)
 
 categories, types, authors, narrators, publishers = (
