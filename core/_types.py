@@ -57,13 +57,14 @@ class Books:
 			"pagination": {
 				"total_pages": len(pages),
 				"remaining_pages": len(pages) - 1 - page,
-				"previous_page": (page - 1) if (page - 1) > 0 else None,
+				"previous_page": (page - 1) if (page - 1) > -1 else None,
 				"current_page": page,
 				"next_page":  (page + 1) if (page + 1) < len(pages) else None
 			},
 			"results": {
 				"total_results": total_results,
 				"max_results": max_results,
+				"display_results": len(pages[page]),
 				"results": pages[page]
 			}
 		}
