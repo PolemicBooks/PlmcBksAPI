@@ -57,7 +57,6 @@ server {
         add_header Access-Control-Allow-Origin "*" always;
         add_header Access-Control-Expose-Headers "*" always;
         add_header Access-Control-Max-Age "86400" always;
-        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
         add_header Cross-Origin-Embedder-Policy "require-corp" always;
         add_header Cross-Origin-Opener-Policy "same-origin" always;
         add_header Cross-Origin-Resource-Policy "cross-origin" always;
@@ -97,13 +96,13 @@ server {
         autoindex on;
         autoindex_exact_size off;
         autoindex_localtime on;
-        
+
         alias /home/pbapi/pbapi/files/dumps;
-    
+
     }
 
     client_max_body_size 150k;
-    
+
 }
 
 server {
@@ -130,14 +129,12 @@ server {
         add_header Access-Control-Allow-Origin "*" always;
         add_header Access-Control-Expose-Headers "*" always;
         add_header Access-Control-Max-Age "86400" always;
-        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
         add_header Cross-Origin-Embedder-Policy "require-corp" always;
         add_header Cross-Origin-Opener-Policy "same-origin" always;
         add_header Cross-Origin-Resource-Policy "cross-origin" always;
         add_header X-Content-Type-Options "nosniff" always;
         add_header Referrer-Policy "no-referrer" always;
         add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'" always;
-        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp" always;
 
         index index.html;
         root /home/pbapi/pbapi/templates/;
@@ -159,12 +156,11 @@ server {
         add_header X-Content-Type-Options "nosniff" always;
         add_header Referrer-Policy "no-referrer" always;
         add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'" always;
-        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp" always;
         add_header Accept-Ranges "none" always;
 
         proxy_set_header Host $http_host;
         proxy_pass http://unix:/run/pbapi.sock;
-        
+
         expires 7d;
 
     }
@@ -183,16 +179,15 @@ server {
         add_header X-Content-Type-Options "nosniff" always;
         add_header Referrer-Policy "no-referrer" always;
         add_header Content-Security-Policy "default-src 'none'; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'" always;
-        add_header X-Robots-Tag "noindex, nofollow, noarchive, nocache, noimageindex, noodp" always;
 
         autoindex on;
         autoindex_exact_size off;
         autoindex_localtime on;
-        
+
         alias /home/pbapi/pbapi/files/dumps;
-    
+
     }
 
     client_max_body_size 150k;
-    
+
 }
