@@ -58,10 +58,7 @@ while message_id < 135000:
 			"title_ascii_lower": None if book_title is None else capitalize_words(unidecode(book_title)).lower(),
 			"type": book_type,
 			"category": None if category is None else category.replace("\\", "/"),
-			"duration": {
-				"seconds": human_duration_to_seconds(message.caption.markdown) if book_type == "Audiobook" else None,
-				"human": duration
-			},
+			"duration": None if book_type != "Audiobook" else {"seconds": human_duration_to_seconds(message.caption.markdown), "human": duration},
 			"size": {
 				"bytes": 0,
 				"human": None
@@ -121,10 +118,7 @@ while message_id < 135000:
 			"title_ascii_lower": None if book_title is None else capitalize_words(unidecode(book_title)).lower(),
 			"type": book_type,
 			"category": None if category is None else category.replace("\\", "/"),
-			"duration": {
-				"seconds":  human_duration_to_seconds(message.text.markdown) if book_type == "Audiobook" else None,
-				"human": duration
-			},
+			"duration": None if book_type != "Audiobook" else {"seconds":  human_duration_to_seconds(message.text.markdown), "human": duration},
 			"size": {
 				"bytes": 0,
 				"human": None
