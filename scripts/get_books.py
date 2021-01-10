@@ -57,7 +57,7 @@ while message_id < 135000:
 			"date": {
 				"epoch": message.date,
 				"human": time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.localtime(message.date))
-			),
+			},
 			"title": None if book_title is None else capitalize_words(book_title),
 			"title_ascii_lower": None if book_title is None else capitalize_words(unidecode(book_title)).lower(),
 			"type": book_type,
@@ -121,7 +121,7 @@ while message_id < 135000:
 			"date": {
 				"epoch": message.date,
 				"human": time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.localtime(message.date))
-			),
+			},
 			"title": None if book_title is None else capitalize_words(book_title),
 			"title_ascii_lower": None if book_title is None else capitalize_words(unidecode(book_title)).lower(),
 			"type": book_type,
