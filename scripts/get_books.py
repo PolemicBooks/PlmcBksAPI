@@ -22,12 +22,12 @@ book = {}
 client = Client(**PYROGRAM_OPTIONS)
 client.start()
 
-while message_id < 135000:
+while message_id < 145000:
 	
 	message_id += 1
 	
 	# Essas mensagens não são publicações de livros
-	if message_id in (2, 10596, 10597, 13337, 131117):
+	if message_id in (2, 10596, 10597, 13337, 131117, 134378, 134379):
 		continue
 	
 	message = client.get_messages("@PolemicBooks", message_id)
