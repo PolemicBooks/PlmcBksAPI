@@ -57,13 +57,17 @@ while message_id < 145000:
 				"epoch": message.date,
 				"human": time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.localtime(message.date))
 			},
-			"title": {
+			"title": None if book_title is None else {
 				"original": None if book_title is None else book_title,
 				"capitalized": None if book_title is None else capitalize_words(book_title),
 				"ascii_lower": None if book_title is None else remove_accents(book_title).lower()
 			},
-			"type": book_type,
-			"category": {
+			"type": None if book_type is None else {
+				"original": None if book_type is None else book_type,
+				"capitalized": None if book_type is None else capitalize_words(book_type),
+				"ascii_lower": None if book_type is None else remove_accents(book_type).lower()
+			},
+			"category": None if category is None else {
 				"original": None if category is None else category.replace("\\", "/"),
 				"capitalized": None,
 				"ascii_lower": None if category is None else remove_accents(category.replace("\\", "/").lower()),
@@ -73,7 +77,7 @@ while message_id < 145000:
 				"bytes": 0,
 				"human": None
 			},
-			"author": {
+			"author": None if author is None else {
 				"original": None if author is None else author,
 				"capitalized": None if author is None else capitalize_words(author),
 				"ascii_lower": None if author is None else remove_accents(author).lower()
@@ -83,7 +87,7 @@ while message_id < 145000:
 				"capitalized": None if narrator is None else capitalize_words(narrator),
 				"ascii_lower": None if narrator is None else remove_accents(narrator).lower()
 			},
-			"publisher": {
+			"publisher": None if publisher is None else {
 				"original": None if publisher is None else publisher,
 				"capitalized": None if publisher is None else capitalize_words(publisher),
 				"ascii_lower": None if publisher is None else remove_accents(publisher).lower()
@@ -140,15 +144,19 @@ while message_id < 145000:
 				"epoch": message.date,
 				"human": time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.localtime(message.date))
 			},
-			"title": {
+			"title": None if book_title is None else {
 				"original": None if book_title is None else book_title,
 				"capitalized": None if book_title is None else capitalize_words(book_title),
 				"ascii_lower": None if book_title is None else remove_accents(book_title).lower()
 			},
-			"type": book_type,
-			"category": {
+			"type": None if book_type is None else {
+				"original": None if book_type is None else book_type,
+				"capitalized": None if book_type is None else capitalize_words(book_type),
+				"ascii_lower": None if book_type is None else remove_accents(book_type).lower()
+			},
+			"category": None if category is None else {
 				"original": None if category is None else category.replace("\\", "/"),
-				"capitalized": None,
+				"capitalized": : None if category is None else capitalize_words(category),
 				"ascii_lower": None if category is None else remove_accents(category.replace("\\", "/").lower()),
 			},
 			"duration": None if book_type != "Audiobook" else {"seconds":  human_duration_to_seconds(message.text.markdown), "human": duration},
@@ -156,7 +164,7 @@ while message_id < 145000:
 				"bytes": 0,
 				"human": None
 			},
-			"author": {
+			"author": None if author is None else {
 				"original": None if author is None else author,
 				"capitalized": None if author is None else capitalize_words(author),
 				"ascii_lower": None if author is None else remove_accents(author).lower()
@@ -166,7 +174,7 @@ while message_id < 145000:
 				"capitalized": None if narrator is None else capitalize_words(narrator),
 				"ascii_lower": None if narrator is None else remove_accents(narrator).lower()
 			},
-			"publisher": {
+			"publisher": None if publisher is None else {
 				"original": None if publisher is None else publisher,
 				"capitalized": None if publisher is None else capitalize_words(publisher),
 				"ascii_lower": None if publisher is None else remove_accents(publisher).lower()
@@ -220,8 +228,8 @@ categories, types, authors, narrators, publishers = (
 
 for book in books:
 	category, book_type, author, narrator, publisher = (
-		book.get("category"), book.get("type"), book.get("author"),
-		book.get("narrator"), book.get("publisher")
+		book["category"]["original"], book["type"]["original"], book["author"]["original"],
+		book["narrator"]["original"], book["publisher"]["original"]
 	)
 	
 	if category is not None and category not in categories:
