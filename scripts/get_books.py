@@ -156,7 +156,7 @@ while message_id < 145000:
 			},
 			"category": None if category is None else {
 				"original": None if category is None else category.replace("\\", "/"),
-				"capitalized": : None if category is None else capitalize_words(category),
+				"capitalized": None if category is None else capitalize_words(category),
 				"ascii_lower": None if category is None else remove_accents(category.replace("\\", "/").lower()),
 			},
 			"duration": None if book_type != "Audiobook" else {"seconds":  human_duration_to_seconds(message.text.markdown), "human": duration},
