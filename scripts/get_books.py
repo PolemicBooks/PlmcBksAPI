@@ -78,7 +78,7 @@ while message_id < 145000:
 				"capitalized": None if author is None else capitalize_words(author),
 				"ascii_lower": None if author is None else remove_accents(author).lower()
 			},
-			"narrator": {
+			"narrator": None if narrator is None else {
 				"original": None if narrator is None else narrator,
 				"capitalized": None if narrator is None else capitalize_words(narrator),
 				"ascii_lower": None if narrator is None else remove_accents(narrator).lower()
@@ -161,7 +161,7 @@ while message_id < 145000:
 				"capitalized": None if author is None else capitalize_words(author),
 				"ascii_lower": None if author is None else remove_accents(author).lower()
 			},
-			"narrator": {
+			"narrator": None if narrator is None else {
 				"original": None if narrator is None else narrator,
 				"capitalized": None if narrator is None else capitalize_words(narrator),
 				"ascii_lower": None if narrator is None else remove_accents(narrator).lower()
