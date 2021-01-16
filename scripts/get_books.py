@@ -5,7 +5,6 @@ import os
 
 import pandas
 from pyrogram import Client
-from unidecode import unidecode
 
 from _config import *
 from _core import *
@@ -58,18 +57,37 @@ while message_id < 145000:
 				"epoch": message.date,
 				"human": time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.localtime(message.date))
 			},
-			"title": None if book_title is None else capitalize_words(book_title),
-			"title_ascii_lower": None if book_title is None else capitalize_words(unidecode(book_title)).lower(),
+			"title": {
+				"original": None if book_title is None else book_title,
+				"capitalized": None if book_title is None else capitalize_words(book_title),
+				"ascii_lower": None if book_title is None else remove_accents(book_title).lower()
+			},
 			"type": book_type,
-			"category": None if category is None else category.replace("\\", "/"),
+			"category": {
+				"original": None if category is None else category.replace("\\", "/"),
+				"capitalized": None,
+				"ascii_lower": None if category is None else remove_accents(category.replace("\\", "/").lower()),
+			},
 			"duration": None if book_type != "Audiobook" else {"seconds": human_duration_to_seconds(message.caption.markdown), "human": duration},
 			"size": {
 				"bytes": 0,
 				"human": None
 			},
-			"author": None if author is None else capitalize_words(author),
-			"narrator": None if narrator is None else capitalize_words(narrator),
-			"publisher": None if publisher is None else capitalize_words(publisher),
+			"author": {
+				"original": None if author is None else author,
+				"capitalized": None if author is None else capitalize_words(author),
+				"ascii_lower": None if author is None else remove_accents(author).lower()
+			},
+			"narrator": {
+				"original": None if narrator is None else narrator,
+				"capitalized": None if narrator is None else capitalize_words(narrator),
+				"ascii_lower": None if narrator is None else remove_accents(narrator).lower()
+			},
+			"publisher": {
+				"original": None if publisher is None else publisher,
+				"capitalized": None if publisher is None else capitalize_words(publisher),
+				"ascii_lower": None if publisher is None else remove_accents(publisher).lower()
+			},
 			"views": message.views,
 			"location": f"/l/{message.message_id}",
 			"photo": {
@@ -122,18 +140,37 @@ while message_id < 145000:
 				"epoch": message.date,
 				"human": time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.localtime(message.date))
 			},
-			"title": None if book_title is None else capitalize_words(book_title),
-			"title_ascii_lower": None if book_title is None else capitalize_words(unidecode(book_title)).lower(),
+			"title": {
+				"original": None if book_title is None else book_title,
+				"capitalized": None if book_title is None else capitalize_words(book_title),
+				"ascii_lower": None if book_title is None else remove_accents(book_title).lower()
+			},
 			"type": book_type,
-			"category": None if category is None else category.replace("\\", "/"),
+			"category": {
+				"original": None if category is None else category.replace("\\", "/"),
+				"capitalized": None,
+				"ascii_lower": None if category is None else remove_accents(category.replace("\\", "/").lower()),
+			},
 			"duration": None if book_type != "Audiobook" else {"seconds":  human_duration_to_seconds(message.text.markdown), "human": duration},
 			"size": {
 				"bytes": 0,
 				"human": None
 			},
-			"author": None if author is None else capitalize_words(author),
-			"narrator": None if narrator is None else capitalize_words(narrator),
-			"publisher": None if publisher is None else capitalize_words(publisher),
+			"author": {
+				"original": None if author is None else author,
+				"capitalized": None if author is None else capitalize_words(author),
+				"ascii_lower": None if author is None else remove_accents(author).lower()
+			},
+			"narrator": {
+				"original": None if narrator is None else narrator,
+				"capitalized": None if narrator is None else capitalize_words(narrator),
+				"ascii_lower": None if narrator is None else remove_accents(narrator).lower()
+			},
+			"publisher": {
+				"original": None if publisher is None else publisher,
+				"capitalized": None if publisher is None else capitalize_words(publisher),
+				"ascii_lower": None if publisher is None else remove_accents(publisher).lower()
+			},
 			"views": message.views,
 			"photo": None,
 			"location": f"/l/{message.message_id}",

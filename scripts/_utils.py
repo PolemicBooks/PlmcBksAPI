@@ -1,4 +1,5 @@
 import re
+import unicodedata
 
 def bytes_to_human(bytes):
 	
@@ -51,5 +52,17 @@ def human_duration_to_seconds(text):
 	
 	return total_seconds
 
+
 def capitalize_words(string):
 	return " ".join([word.capitalize() if not word.istitle() and len(word) > 3 else word for word in string.split(" ")])
+
+
+def remove_accents(string):
+	
+    nfkd = unicodedata.normalize('NFKD', string)
+    
+    return "".join(
+		[
+			character for character in nfkd if not unicodedata.combining(character)
+		]
+	)
