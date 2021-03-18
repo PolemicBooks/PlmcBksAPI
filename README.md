@@ -54,7 +54,7 @@ $ cd ~/PlmcBksAPI
 $ python3 scripts/setup_dependencies.py
 ```
 
-3. Realize login usando sua conta no Telegram:
+3. Faça login usando sua conta no Telegram:
 
 Isso será necessário para tornar o download de documentos e imagens através da API possível.
 
@@ -71,14 +71,12 @@ optional arguments:
   --api-hash API_HASH  telegram api hash
 ```
 
-> Adicione também seu `api_id` e `api_hash` no arquivo `config/pyrogram/config.py`.
-
-> Apenas realize o login usando contas descartáveis. Embora as chances sejam baixas, sua conta ainda pode ser banida por abuso.
+_Apenas realize o login usando contas descartáveis. Embora as chances sejam baixas, sua conta ainda pode ser banida por abuso._
 
 4. Inicie a aplicação
 
 ```bash
-$ uvicorn application:app
+$ virtualenv/bin/uvicorn application:app
 
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 INFO:     Started reloader process [28720]
@@ -87,4 +85,4 @@ INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 ```
 
-> Leva em média 5 minutos para que a aplicação inicie.
+_Leva em média 5 minutos para que a aplicação inicie._
