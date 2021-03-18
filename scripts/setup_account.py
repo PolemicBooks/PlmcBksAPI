@@ -18,10 +18,13 @@ parser.add_argument("--api-hash", type=str, help="telegram api hash", required=T
 
 options = parser.parse_args()
 
+api_id = options.api_id
+api_hash = options.api_hash
+
 OPTIONS = {
 	"session_name": "bot",
-	"api_id": options.api_id,
-	"api_hash": options.api_hash,
+	"api_id": api_id,
+	"api_hash": api_hash,
 	"no_updates": True,
 	"app_version": "PlmcBksAPI v0.1 (PolemicBooks/PlmcBksAPI)",
 	"workdir": "./.pyrogram"
@@ -42,3 +45,21 @@ except (ChannelInvalid, ChannelPrivate):
 else:
 	if not chat:
 		client.join_chat("https://t.me/joinchat/VZ8qrRKuIvT4gDBa")
+
+config = f"""\
+import os
+
+
+# Configurações usadas para realizar login no Telegram.
+PYROGRAM_OPTIONS = {{
+	"session_name": "bot",
+	"api_id": {api_id},
+	"api_hash": "{api_hash}",
+	"workdir": os.path.join(os.getcwd(), ".pyrogram"),
+	"no_updates": True,
+	"app_version": "(PlmcBksAPI v0.1)"
+}}
+"""
+
+with open(file="./config/pyrogram/config.py", mode="w") as file:
+	file.write(config)
