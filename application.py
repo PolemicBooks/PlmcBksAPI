@@ -1143,7 +1143,7 @@ def get_document_by_id(
 		status_code = status.HTTP_404_NOT_FOUND
 		return ORJSONResponse(content=content, status_code=status_code)
 	
-	return dict(book)
+	return dict(document)
 
 
 @app.get("/download/{document_id}", tags=["mídias"])
