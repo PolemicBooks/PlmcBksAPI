@@ -1351,7 +1351,7 @@ def rss_feed(
 				"<p>"
 				+ f'<img src="{"/view/" + str(book.cover.id)}" width="{book.cover.resolution.width}" height="{book.cover.resolution.height}" referrerpolicy="no-referrer">'
 				+ create_caption(book)
-				+ f'<strong>Download</strong>: <em><a href="{"/download/" + str(book.documents[0].id)}">{book.documents[0].file_name}</a></em>'
+				+ f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.documents[0].file_name}</a></em>'
 				"</p>"
 			)
 		) for book in books

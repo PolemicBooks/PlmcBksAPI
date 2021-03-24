@@ -1,6 +1,6 @@
 from ..urls import urls
 
-BASE = """\
+BASE = f"""\
 <?xml version="1.0" encoding="utf-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
@@ -10,7 +10,7 @@ BASE = """\
     <language>pt-BR</language>
     <category>Livros</category>
     <ttl>60</ttl>
-    <atom:link href="/rss" rel="self" type="application/rss+xml" />
+    <atom:link href="{urls.API_URL + "/rss"}" rel="self" type="application/rss+xml" />
 {}
   </channel>
 </rss>
