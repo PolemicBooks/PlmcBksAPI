@@ -1344,12 +1344,12 @@ def rss_feed(
 			html.escape(book.title),
 			urls.PRIVATE_CHAT_URL + '/' + str(book.message_id),
 			urls.PRIVATE_CHAT_URL + '/' + str(book.message_id),
-			"/download/" + str(book.documents[0].message_id), book.documents[0].file_size, book.documents[0].mime_type,
+			urls.API_URL + "/download/" + str(book.documents[0].message_id), book.documents[0].file_size, book.documents[0].mime_type,
 			html.escape("plmcbks@pm.me (Polemic Books)"),
 			time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.localtime(book.date)),
 			html.escape(
 				"<p>"
-				+ f'<img src="{"/view/" + str(book.cover.id)}" width="{book.cover.resolution.width}" height="{book.cover.resolution.height}" referrerpolicy="no-referrer">'
+				+ f'<img src="{urls.API_URL + "/view/" + str(book.cover.id)}" width="{book.cover.resolution.width}" height="{book.cover.resolution.height}" referrerpolicy="no-referrer">'
 				+ create_caption(book)
 				+ f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.documents[0].file_name}</a></em>'
 				"</p>"

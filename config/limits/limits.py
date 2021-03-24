@@ -1,13 +1,13 @@
 # Limites da paginação
 MIN_PAGE_NUMBER = 0
-MAX_PAGE_NUMBER = 100000
+MAX_PAGE_NUMBER = 200000
 
 MIN_PAGE_ITEMS = 1
 MAX_PAGE_ITEMS = 1000
 
 # Ranges de identificação numérica para entidades, documentos e livros.
 MIN_ID = 0
-MAX_ID = 100000
+MAX_ID = 200000
 
 # Limites de caracteres das pesquisa de livros e entidades.
 MIN_QUERY_LENGTH = 3
