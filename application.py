@@ -1344,14 +1344,14 @@ def rss_feed(
 			html.escape(book.title),
 			urls.PRIVATE_CHAT_URL + '/' + str(book.message_id),
 			urls.PRIVATE_CHAT_URL + '/' + str(book.message_id),
-			urls.API_URL + "/download/" + str(book.documents[0].message_id), book.documents[0].file_size, book.documents[0].mime_type,
-			html.escape(book.author.name if book.author is not None else "Polemic Books"),
+			"/download/" + str(book.documents[0].message_id), book.documents[0].file_size, book.documents[0].mime_type,
+			html.escape("plmcbks@pm.me (Polemic Books)"),
 			time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.localtime(book.date)),
 			html.escape(
 				"<p>"
-				+ f'<img src="{urls.API_URL + "/view/" + str(book.cover.id)}" width="{book.cover.resolution.width}" height="{book.cover.resolution.height}" referrerpolicy="no-referrer">'
+				+ f'<img src="{"/view/" + str(book.cover.id)}" width="{book.cover.resolution.width}" height="{book.cover.resolution.height}" referrerpolicy="no-referrer">'
 				+ create_caption(book)
-				+ f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.documents[0].file_name}</a></em>'
+				+ f'<strong>Download</strong>: <em><a href="{"/download/" + str(book.documents[0].id)}">{book.documents[0].file_name}</a></em>'
 				"</p>"
 			)
 		) for book in books
@@ -1359,7 +1359,7 @@ def rss_feed(
 	
 	content = rss.BASE.format("".join(items))
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/rss+xml")
 
 
 @app.get("/opds", tags=["opds"])
