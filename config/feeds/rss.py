@@ -11,7 +11,7 @@ BASE = f"""\
     <category>Livros</category>
     <ttl>60</ttl>
     <atom:link href="{urls.API_URL + "/rss"}" rel="self" type="application/rss+xml" />
-{}
+{{}}
   </channel>
 </rss>
 """
