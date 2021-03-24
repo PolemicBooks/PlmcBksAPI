@@ -1398,7 +1398,7 @@ def opds_home():
 		"Pesquise ou baixe ebooks, audiobooks, comics e mangás."
 	) + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/authors", tags=["opds"])
@@ -1450,7 +1450,7 @@ def opds_get_authors(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/authors/{author_id}", tags=["opds"])
@@ -1529,7 +1529,7 @@ def opds_get_books_by_author(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/artists", tags=["opds"])
@@ -1581,7 +1581,7 @@ def opds_get_artists(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/artists/{artist_id}", tags=["opds"])
@@ -1659,7 +1659,7 @@ def opds_get_books_by_artist(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/narrators", tags=["opds"])
@@ -1711,7 +1711,7 @@ def opds_get_narrators(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/narrators/{narrator_id}", tags=["opds"])
@@ -1789,7 +1789,7 @@ def opds_get_books_by_narrator(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/publishers", tags=["opds"])
@@ -1841,7 +1841,7 @@ def opds_get_publishers(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/publishers/{publisher_id}", tags=["opds"])
@@ -1919,7 +1919,7 @@ def opds_get_books_by_publisher(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/categories", tags=["opds"])
@@ -1971,7 +1971,7 @@ def opds_get_categories(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/categories/{category_id}", tags=["opds"])
@@ -2049,7 +2049,7 @@ def opds_get_books_by_category(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/types", tags=["opds"])
@@ -2101,7 +2101,7 @@ def opds_get_types(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/types/{type_id}", tags=["opds"])
@@ -2180,7 +2180,7 @@ def opds_get_books_by_type(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/years", tags=["opds"])
@@ -2232,7 +2232,7 @@ def opds_get_years(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/years/{year_id}", tags=["opds"])
@@ -2310,7 +2310,7 @@ def opds_get_books_by_year(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 @app.get("/opds/search/books", tags=["opds"])
@@ -2391,7 +2391,7 @@ def opds_search_books(
 	
 	content = base_feed + "".join(items) + "</feed>"
 	
-	return Response(content=content, media_type="application/xml")
+	return Response(content=content, media_type="application/atom+xml")
 
 
 # Start webserver
