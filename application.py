@@ -25,7 +25,6 @@ import pyrogram
 import uvicorn
 
 from config.feeds import rss, opds
-from config.limits import cache
 from config.limits import limits
 from config.metadata import openapi
 from config.pyrogram import config
@@ -1171,6 +1170,7 @@ async def download_document_by_id(
 			rate_limit = None
 	
 	document = plmcbks.documents.get(document_id)
+	book = document.get_book(plmcbks.books)
 	
 	if document is None:
 		content = {"error": "document not found"}
@@ -1189,22 +1189,18 @@ async def download_document_by_id(
 		return ORJSONResponse(
 			content=content, status_code=status_code, headers=headers)
 	
-	document_generator = await pclient.download_media(
-		message, streaming=True)
-	
 	headers = {
-		"Cache-Control": f"public, max-age={cache.MEDIA_CACHE_MAX_AGE}",
-		"Expires": time.strftime(
-			"%a, %d %b %Y %H:%M:%S GMT", time.localtime(int(time.time()) + cache.MEDIA_CACHE_MAX_AGE)),
 		"Last-Modified": time.strftime(
 			"%a, %d %b %Y %H:%M:%S GMT", time.localtime(document.date)),
 		"Content-Type": document.mime_type,
 		"Content-Length": str(document.file_size),
 		"Content-Disposition": 'inline; filename="{}"'.format(
-			urllib.parse.quote(document.file_name))
+			urllib.parse.quote(f"{book.title}.{document.file_extension}" if book.title is not None else f"cover.{document.file_extension}"))
 	}
 	
-	return StreamingResponse(document_generator, headers=headers)
+	media_streaming = await pclient.stream_media(message)
+	
+	return StreamingResponse(media_streaming, headers=headers)
 
 
 @app.get("/covers", tags=["mídias"])
@@ -1287,6 +1283,7 @@ async def view_cover_by_id(
 			rate_limit = None
 	
 	cover = plmcbks.covers.get(cover_id)
+	book = cover.get_book(plmcbks.books)
 	
 	if cover is None:
 		content = {"error": "cover not found"}
@@ -1306,21 +1303,17 @@ async def view_cover_by_id(
 			content=content, status_code=status_code, headers=headers)
 	
 	headers = {
-		"Cache-Control": f"public, max-age={cache.MEDIA_CACHE_MAX_AGE}",
-		"Expires": time.strftime(
-			"%a, %d %b %Y %H:%M:%S GMT", time.localtime(int(time.time()) + cache.MEDIA_CACHE_MAX_AGE)),
 		"Last-Modified": time.strftime(
 			"%a, %d %b %Y %H:%M:%S GMT", time.localtime(cover.date)),
 		"Content-Type": cover.mime_type,
 		"Content-Length": str(cover.file_size),
 		"Content-Disposition": 'inline; filename="{}"'.format(
-			urllib.parse.quote(cover.file_name))
+			urllib.parse.quote(f"{book.title}.{cover.file_extension}" if book.title is not None else f"cover.{cover.file_extension}"))
 	}
 	
-	document_generator = await pclient.download_media(
-		message, streaming=True)
+	media_streaming = await pclient.stream_media(message)
 	
-	return StreamingResponse(document_generator, headers=headers)
+	return StreamingResponse(media_streaming, headers=headers)
 
 
 @app.get("/rss", tags=["rss"])

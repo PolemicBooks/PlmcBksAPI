@@ -76,13 +76,7 @@ _Apenas realize o login usando contas descartáveis. Embora as chances sejam bai
 4. Inicie a aplicação
 
 ```bash
-$ virtualenv/bin/uvicorn application:app
-
-INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [28720]
-INFO:     Started server process [28722]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
+$ python application.py
 ```
 
 _Leva em média 5 minutos para que a aplicação inicie._
