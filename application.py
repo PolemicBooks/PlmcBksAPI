@@ -4,6 +4,7 @@ import html
 import time
 import urllib.parse
 
+import aiohttp
 from fastapi import (
 	FastAPI,
 	Header,
