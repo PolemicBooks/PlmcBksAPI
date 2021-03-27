@@ -1192,8 +1192,6 @@ async def download_document_by_id(
 	document_generator = await pclient.download_media(
 		message, streaming=True)
 	
-	
-	
 	headers = {
 		"Cache-Control": f"public, max-age={cache.MEDIA_CACHE_MAX_AGE}",
 		"Expires": time.strftime(
@@ -2410,8 +2408,8 @@ if __name__ == "__main__":
 	
 	parser = argparse.ArgumentParser()
 	
-	parser.add_argument("-h", "--host", description="host to bind socket on", default="127.0.0.1")
-	parser.add_argument("-p", "--port", description="port to bind socket on", type=int, default=8080)
+	parser.add_argument("-h", "--host", default="127.0.0.1")
+	parser.add_argument("-p", "--port", type=int, default=8080)
 	
 	options = parser.parse_args()
 	
