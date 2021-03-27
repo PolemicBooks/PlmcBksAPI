@@ -1339,7 +1339,7 @@ def rss_feed(
 				"<p>"
 				+ f'<img src="{urls.API_URL + "/view/" + str(book.cover.id)}" width="{book.cover.resolution.width}" height="{book.cover.resolution.height}" referrerpolicy="no-referrer">'
 				+ create_caption(book)
-				+ f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{f'{book.title}.{book.documents[0].file_extension}' if book.title is not None else f'document.{book.documents[0].file_extension}'}</a></em>'
+				+ f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + '.' + book.documents[0].file_extension if book.title is not None else 'document.' + book.documents[0].file_extension}</a></em>'
 				"</p>"
 			)
 		) for book in books
@@ -1492,7 +1492,7 @@ def opds_get_books_by_author(
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
-		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{f'{book.title}.{book.documents[0].file_extension}' if book.title is not None else f'document.{book.documents[0].file_extension}'}</a></em>')
+		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + '.' + book.documents[0].file_extension if book.title is not None else 'document.' + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
 	
@@ -1623,7 +1623,7 @@ def opds_get_books_by_artist(
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
-		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{f'{book.title}.{book.documents[0].file_extension}' if book.title is not None else f'document.{book.documents[0].file_extension}'}</a></em>')
+		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + '.' + book.documents[0].file_extension if book.title is not None else 'document.' + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
 	
@@ -1753,7 +1753,7 @@ def opds_get_books_by_narrator(
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
-		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{f'{book.title}.{book.documents[0].file_extension}' if book.title is not None else f'document.{book.documents[0].file_extension}'}</a></em>')
+		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + '.' + book.documents[0].file_extension if book.title is not None else 'document.' + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
 	
@@ -1883,7 +1883,7 @@ def opds_get_books_by_publisher(
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
-		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{f'{book.title}.{book.documents[0].file_extension}' if book.title is not None else f'document.{book.documents[0].file_extension}'}</a></em>')
+		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + '.' + book.documents[0].file_extension if book.title is not None else 'document.' + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
 	
@@ -2013,7 +2013,7 @@ def opds_get_books_by_category(
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
-		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{f'{book.title}.{book.documents[0].file_extension}' if book.title is not None else f'document.{book.documents[0].file_extension}'}</a></em>')
+		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + '.' + book.documents[0].file_extension if book.title is not None else 'document.' + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
 	
@@ -2143,7 +2143,7 @@ def opds_get_books_by_type(
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
-		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{f'{book.title}.{book.documents[0].file_extension}' if book.title is not None else f'document.{book.documents[0].file_extension}'}</a></em>')
+		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + '.' + book.documents[0].file_extension if book.title is not None else 'document.' + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
 	
@@ -2274,7 +2274,7 @@ def opds_get_books_by_year(
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
-		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{f'{book.title}.{book.documents[0].file_extension}' if book.title is not None else f'document.{book.documents[0].file_extension}'}</a></em>')
+		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + '.' + book.documents[0].file_extension if book.title is not None else 'document.' + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
 	
@@ -2355,7 +2355,7 @@ def opds_search_books(
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
-		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{f'{book.title}.{book.documents[0].file_extension}' if book.title is not None else f'document.{book.documents[0].file_extension}'}</a></em>')
+		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + '.' + book.documents[0].file_extension if book.title is not None else 'document.' + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
 	
