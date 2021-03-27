@@ -8,9 +8,6 @@ import os
 import pyrogram
 from pyrogram.errors import ChannelInvalid, ChannelPrivate
 
-if __name__ != '__main__':
-	quit()
-
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--api-id", type=int, help="telegram api id", required=True)

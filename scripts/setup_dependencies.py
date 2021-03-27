@@ -6,10 +6,6 @@ import subprocess
 import os
 import platform
 
-
-if __name__ != '__main__':
-	quit()
-
 major, minor, micro = platform.python_version_tuple()
 python_version = float(f"{major}.{minor}")
 
