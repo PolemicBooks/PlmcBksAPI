@@ -1,4 +1,4 @@
-import asyncio
+import argparse
 from typing import Optional
 import html
 import time
@@ -1157,6 +1157,9 @@ async def download_document_by_id(
 	
 	global rate_limit
 	
+	if pclient is None or hclient is None:
+		await build_clients()
+	
 	if rate_limit:
 		remaining_seconds = int(time.time()) - rate_limit
 		if remaining_seconds > 0:
@@ -1270,6 +1273,9 @@ async def view_cover_by_id(
 	"""
 	
 	global rate_limit
+	
+	if pclient is None or hclient is None:
+		await build_clients()
 	
 	if rate_limit:
 		remaining_seconds = int(time.time()) - rate_limit
@@ -2401,8 +2407,20 @@ async def build_clients():
 	
 
 if __name__ == "__main__":
-	loop = asyncio.get_event_loop()
-	loop.run_until_complete(build_clients())
-	uvicorn.run(app)
+	
+	parser = argparse.ArgumentParser()
+	
+	parser.add_argument("-h", "--host", description="host to bind socket on", default="127.0.0.1")
+	parser.add_argument("-p", "--port", description="port to bind socket on", type=int, default=8080)
+	
+	options = parser.parse_args()
+	
+	uvicorn.run(
+		app=app,
+		host=options.host,
+		port=options.port,
+		access_log=False,
+		log_level="error"
+	)
 
 	
