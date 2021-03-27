@@ -1,8 +1,6 @@
+import asyncio
 from typing import Optional
 import html
-import http.client
-import multiprocessing
-import pytest
 import time
 import urllib.parse
 
@@ -31,10 +29,10 @@ from config.limits import limits
 from config.metadata import openapi
 from config.pyrogram import config
 from config.urls import urls
+from config.resolvers import resolvers
 from utils.books import create_caption
 from utils.opds import create_content
 from utils.paginations import create_pagination
-
 
 app = FastAPI(
 	title="PlmcBksAPI",
@@ -58,7 +56,9 @@ years_list = list(plmcbks.years)
 covers_list = list(plmcbks.covers)
 documents_list = list(plmcbks.documents)
 
-client = None
+pclient = None
+hclient = None
+
 rate_limit = None
 last_modified = time.strftime(
 	"%a, %d %b %Y %H:%M:%S GMT", time.localtime(LAST_MODIFIED))
@@ -1154,12 +1154,7 @@ async def download_document_by_id(
 	Use este método para baixar o documento em questão.
 	"""
 	
-	global client
 	global rate_limit
-	
-	if client is None:
-		client = pyrogram.Client(**config.PYROGRAM_OPTIONS)
-		await client.start()
 	
 	if rate_limit:
 		remaining_seconds = int(time.time()) - rate_limit
@@ -1179,7 +1174,7 @@ async def download_document_by_id(
 		return ORJSONResponse(content=content, status_code=status_code)
 	
 	try:
-		message = await client.get_messages(
+		message = await pclient.get_messages(
 			chat_id=-1001436494509, message_ids=document.message_id)
 	except FloodWait as e:
 		rate_limit = int(time.time()) + e.x
@@ -1190,7 +1185,7 @@ async def download_document_by_id(
 		return ORJSONResponse(
 			content=content, status_code=status_code, headers=headers)
 	
-	document_generator = await client.download_media(
+	document_generator = await pclient.download_media(
 		message, streaming=True)
 	
 	
@@ -1273,12 +1268,7 @@ async def view_cover_by_id(
 	Use este método para visualizar a imagem de capa em questão.
 	"""
 	
-	global client
 	global rate_limit
-	
-	if client is None:
-		client = pyrogram.Client(**config.PYROGRAM_OPTIONS)
-		await client.start()
 	
 	if rate_limit:
 		remaining_seconds = int(time.time()) - rate_limit
@@ -1299,7 +1289,7 @@ async def view_cover_by_id(
 		return ORJSONResponse(content=content, status_code=status_code)
 	
 	try:
-		message = await client.get_messages(
+		message = await pclient.get_messages(
 			chat_id=-1001436494509, message_ids=cover.message_id)
 	except FloodWait as e:
 		rate_limit = int(time.time()) + e.x
@@ -1322,7 +1312,7 @@ async def view_cover_by_id(
 			urllib.parse.quote(cover.file_name))
 	}
 	
-	document_generator = await client.download_media(
+	document_generator = await pclient.download_media(
 		message, streaming=True)
 	
 	return StreamingResponse(document_generator, headers=headers)
@@ -2394,39 +2384,24 @@ def opds_search_books(
 	return Response(content=content, media_type="application/atom+xml")
 
 
-# Start webserver
-def run_server():
+async def build_clients():
 	
-	uvicorn.run(app)
+	global pclient
+	global hclient
+	
+	# Pyrogram client
+	pclient = pyrogram.Client(**config.PYROGRAM_OPTIONS)
+	await pclient.start()
+	
+	# AioHTTP client
+	resolver = aiohttp.resolver.AsyncResolver(nameservers=resolvers.NAMESERVERS)
+	connector = aiohttp.TCPConnector(limit=0, resolver=resolver, ttl_dns_cache=3600)
+	hclient = aiohttp.ClientSession(connector=connector)
+	
 
+if __name__ == "__main__":
+	loop = asyncio.get_event_loop()
+	loop.run_until_complete(build_clients())
+	unicorn.run(app)
 
-@pytest.fixture
-def server():
-	
-	process = multiprocessing.Process(target=run_server, args=(), daemon=True)
-	process.start()
-	
-	yield
-	
-	process.terminate() # Cleanup after test
-
-
-def test_read_main(server):
-	
-	scheme, netloc, path, params, query, fragment = urllib.parse.urlparse(
-		"http://127.0.0.1:8000/"
-	)
-	
-	while True:
-		try:
-			connection = http.client.HTTPConnection(netloc, timeout=3)
-			connection.request("GET", path)
-		except ConnectionRefusedError:
-			pass
-		else:
-			break
-	
-	response = connection.getresponse()
-	
-	assert response.code == 200
 	

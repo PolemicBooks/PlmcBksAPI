@@ -61,7 +61,7 @@ command = [
 	"uvicorn[standard]",
 	"pyrogram==1.1.13",
 	"tgcrypto",
-	"pytest",
+	"aiohttp[speedups]",
 	"git+https://github.com/PolemicBooks/PlmcBks"
 ]
 
