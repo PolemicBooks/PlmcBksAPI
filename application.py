@@ -2032,7 +2032,7 @@ def opds_get_books_by_category(
 	
 	if next_page < total_pages:
 		base_feed += opds.NEXT_PAGE_BASE.format(
-			f"/opds/categories?page_number={next_page}"
+			f"/opds/categories/{category_id}?page_number={next_page}"
 		)
 	
 	content = base_feed + "".join(items) + "</feed>"
@@ -2162,8 +2162,7 @@ def opds_get_books_by_type(
 	
 	if next_page < total_pages:
 		base_feed += opds.NEXT_PAGE_BASE.format(
-			f"types/{type_id}",
-			next_page
+			f"/opds/types/{type_id}?page_number={next_page}"
 		)
 	
 	content = base_feed + "".join(items) + "</feed>"
@@ -2293,7 +2292,7 @@ def opds_get_books_by_year(
 	
 	if next_page < total_pages:
 		base_feed += opds.NEXT_PAGE_BASE.format(
-			f"/opds/years?page_number={next_page}"
+			f"/opds/years/{year_id}?page_number={next_page}"
 		)
 	
 	content = base_feed + "".join(items) + "</feed>"
