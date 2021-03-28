@@ -10,7 +10,10 @@ BASE = """\
       href="{}"
       type="image/jpeg"/>
   <icon>https://polemicbooks.github.io/images/polemicbooks.jpg</icon>
-  <link type="application/atom+xml" title="Buscar no Polemic Books" href="/opds/search/books?query_name={{searchTerms}}" rel="search"/>
+  <link rel="search"
+      href="/opds/search/books?query_name={{searchTerms}}"
+      type="application/atom+xml"
+      title="Buscar no Polemic Books"/>
   <author>
     <name>Polemic Books</name>
     <uri>https://t.me/PolemicBooks</uri>
@@ -27,15 +30,27 @@ ITEM_BASE = """\
         href="{}"
         type="image/jpeg"/>
     <updated>{}</updated>
-    <link type="application/atom+xml" href="/opds/{}"/>
+    <link type="application/atom+xml"
+        href="/opds/{}"/>
     <content type="text">{}</content>
   </entry>
 """
 
 NEXT_PAGE_BASE = """\
-  <link type="application/atom+xml" title="Próxima" href="{}" rel="next"/>
+  <link rel="next"
+      href="{}"
+      type="application/atom+xml"
+      title="Próxima"/>
 """
 
 SELF_BASE = """\
-  <link type="application/atom+xml" href="{}" rel="self"/>
+  <link rel="self"
+      href="{}"
+      type="application/atom+xml"/>
+"""
+
+RELATED_BASE = """\
+  <link rel="related"
+      href="{}"
+      title="{}"/>
 """
