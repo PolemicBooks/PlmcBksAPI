@@ -1,9 +1,18 @@
+#!/usr/bin/python3
+
+# -*- coding: utf-8 -*-
+
+# Built-in packages
 import argparse
 from typing import Optional
 import html
 import time
 import urllib.parse
+import os
+import sys
+import re
 
+# Third-party packages
 import aiohttp
 from fastapi import (
 	FastAPI,
@@ -16,7 +25,8 @@ from fastapi import (
 )
 from fastapi.responses import (
 	ORJSONResponse,
-	StreamingResponse
+	StreamingResponse,
+	RedirectResponse
 )
 from plmcbks.config.files import LAST_MODIFIED
 from pyrogram.errors import FloodWait
@@ -24,12 +34,17 @@ import plmcbks
 import pyrogram
 import uvicorn
 
+# Configuration
 from config.feeds import rss, opds
 from config.limits import limits
 from config.metadata import openapi
 from config.pyrogram import config
 from config.urls import urls
 from config.resolvers import resolvers
+from config.headers import headers
+
+# Utils
+from utils.streaming import stream_from_url
 from utils.books import create_caption
 from utils.opds import create_content
 from utils.paginations import create_pagination
@@ -57,11 +72,16 @@ covers_list = list(plmcbks.covers)
 documents_list = list(plmcbks.documents)
 
 pclient = None
-hclient = None
+httpclient = None
 
 rate_limit = None
 last_modified = time.strftime(
 	"%a, %d %b %Y %H:%M:%S GMT", time.localtime(LAST_MODIFIED))
+
+clients_ok = False
+
+# https://stackoverflow.com/a/8391735
+sys.stdout = open(file=os.devnull, mode="w")
 
 @app.get("/books", tags=["interações"])
 def get_books(
@@ -1156,7 +1176,7 @@ async def download_document_by_id(
 	
 	global rate_limit
 	
-	if pclient is None or hclient is None:
+	if not clients_ok:
 		await build_clients()
 	
 	if rate_limit:
@@ -1164,6 +1184,7 @@ async def download_document_by_id(
 		if remaining_seconds > 0:
 			content = {"error": f"too many requests, retry after {remaining_seconds} seconds"}
 			headers = {"Retry-After": str(remaining_seconds)}
+			status_code = status.HTTP_503_SERVICE_UNAVAILABLE
 			return ORJSONResponse(
 				content=content, status_code=status_code, headers=headers)
 		else:
@@ -1177,30 +1198,43 @@ async def download_document_by_id(
 		status_code = status.HTTP_404_NOT_FOUND
 		return ORJSONResponse(content=content, status_code=status_code)
 	
+	headers = {
+		"Last-Modified": time.strftime(
+			"%a, %d %b %Y %H:%M:%S GMT", time.localtime(document.date)),
+		"Content-Type": document.mime_type,
+		"Content-Length": str(document.file_size),
+		"Content-Disposition": 'attachment; filename="{}"'.format(
+			urllib.parse.quote(f"{book.title}.{document.file_extension}" if book.title is not None else f"cover.{cover.file_extension}")),
+	}
+	
+	if document.file_gdrive_id is not None:
+		async with httpclient.get(f"https://drive.google.com/uc?id={document.file_gdrive_id}") as response:
+			url = str(response.url)
+		
+		if re.match(r"^https://doc-[0-9a-z]+-[0-9a-z]+-docs\.googleusercontent\.com/.+", url):
+			if response.status == 200:
+				headers["Content-Location"] = url
+				content_streaming = stream_from_url(httpclient, url)
+				return StreamingResponse(content_streaming, headers=headers)
+				
+			status_code = status.HTTP_302_FOUND
+			return RedirectResponse(url=url, status_code=status_code)
+	
 	try:
 		message = await pclient.get_messages(
 			chat_id=-1001436494509, message_ids=document.message_id)
 	except FloodWait as e:
 		rate_limit = int(time.time()) + e.x
 		
-		content = {"error": f"too many requests, retry after {e.x} seconds"}
+		content = {"error": "we don't have enough resources to serve this file at this moment"}
 		headers = {"Retry-After": str(e.x)}
-		status_code = status.HTTP_429_TOO_MANY_REQUESTS
+		status_code = status.HTTP_503_SERVICE_UNAVAILABLE
 		return ORJSONResponse(
 			content=content, status_code=status_code, headers=headers)
+	else:
+		content = await pclient.stream_media(message)
 	
-	headers = {
-		"Last-Modified": time.strftime(
-			"%a, %d %b %Y %H:%M:%S GMT", time.localtime(document.date)),
-		"Content-Type": document.mime_type,
-		"Content-Length": str(document.file_size),
-		"Content-Disposition": 'inline; filename="{}"'.format(
-			urllib.parse.quote(f"{book.title}.{document.file_extension}" if book.title is not None else f"document.{document.file_extension}"))
-	}
-	
-	media_streaming = await pclient.stream_media(message)
-	
-	return StreamingResponse(media_streaming, headers=headers)
+	return StreamingResponse(content=content, headers=headers)
 
 
 @app.get("/covers", tags=["mídias"])
@@ -1268,7 +1302,7 @@ async def view_cover_by_id(
 	
 	global rate_limit
 	
-	if pclient is None or hclient is None:
+	if not clients_ok:
 		await build_clients()
 	
 	if rate_limit:
@@ -1276,7 +1310,7 @@ async def view_cover_by_id(
 		if remaining_seconds > 0:
 			content = {"error": f"too many requests, retry after {remaining_seconds} seconds"}
 			headers = {"Retry-After": str(remaining_seconds)}
-			status_code = status.HTTP_429_TOO_MANY_REQUESTS
+			status_code = status.HTTP_503_SERVICE_UNAVAILABLE
 			return ORJSONResponse(
 				content=content, status_code=status_code, headers=headers)
 		else:
@@ -1290,30 +1324,43 @@ async def view_cover_by_id(
 		status_code = status.HTTP_404_NOT_FOUND
 		return ORJSONResponse(content=content, status_code=status_code)
 	
-	try:
-		message = await pclient.get_messages(
-			chat_id=-1001436494509, message_ids=cover.message_id)
-	except FloodWait as e:
-		rate_limit = int(time.time()) + e.x
-		
-		content = {"error": f"too many requests, retry after {e.x} seconds"}
-		headers = {"Retry-After": str(e.x)}
-		status_code = status.HTTP_429_TOO_MANY_REQUESTS
-		return ORJSONResponse(
-			content=content, status_code=status_code, headers=headers)
-	
 	headers = {
 		"Last-Modified": time.strftime(
 			"%a, %d %b %Y %H:%M:%S GMT", time.localtime(cover.date)),
 		"Content-Type": cover.mime_type,
 		"Content-Length": str(cover.file_size),
 		"Content-Disposition": 'inline; filename="{}"'.format(
-			urllib.parse.quote(f"{book.title}.{cover.file_extension}" if book.title is not None else f"cover.{cover.file_extension}"))
+			urllib.parse.quote(f"{book.title}.{cover.file_extension}" if book.title is not None else f"cover.{cover.file_extension}")),
 	}
 	
-	media_streaming = await pclient.stream_media(message)
+	if cover.file_gdrive_id is not None:
+		async with httpclient.get(f"https://drive.google.com/uc?id={cover.file_gdrive_id}") as response:
+			url = str(response.url)
+		
+		if re.match(r"^https://doc-[0-9a-z]+-[0-9a-z]+-docs\.googleusercontent\.com/.+", url):
+			if response.status == 200:
+				headers["Content-Location"] = url
+				content_streaming = stream_from_url(httpclient, url)
+				return StreamingResponse(content_streaming, headers=headers)
+				
+			status_code = status.HTTP_302_FOUND
+			return RedirectResponse(url=url, status_code=status_code)
 	
-	return StreamingResponse(media_streaming, headers=headers)
+	try:
+		message = await pclient.get_messages(
+			chat_id=-1001436494509, message_ids=cover.message_id)
+	except FloodWait as e:
+		rate_limit = int(time.time()) + e.x
+		
+		content = {"error": "we don't have enough resources to serve this file at this moment"}
+		headers = {"Retry-After": str(e.x)}
+		status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+		return ORJSONResponse(
+			content=content, status_code=status_code, headers=headers)
+	else:
+		content = await pclient.stream_media(message)
+	
+	return StreamingResponse(content=content, headers=headers)
 
 
 @app.get("/rss", tags=["rss"])
@@ -1357,13 +1404,15 @@ def opds_home():
 	"""
 	
 	entries = [
-		("Autores", "autores", "https://polemicbooks.github.io/images/authors.jpg", last_modified, "authors", "Listagem de autores"),
-		("Artistas", "artistas", "https://polemicbooks.github.io/images/artists.jpg", last_modified, "artists", "Listagem de artistas"),
-		("Narradores", "narradores", "https://polemicbooks.github.io/images/narrators.jpg", last_modified, "narrators", "Listagem de narradores"),
-		("Editoras", "editoras", "https://polemicbooks.github.io/images/publishers.jpg", last_modified, "publishers", "Listagem de editoras"),
-		("Categorias", "categorias", "https://polemicbooks.github.io/images/categories.jpg", last_modified, "categories", "Listagem de categorias"),
-		("Tipos", "tipos", "https://polemicbooks.github.io/images/types.jpg", last_modified, "types", "Listagem de tipos"),
-		("Anos", "anos", "https://polemicbooks.github.io/images/years.jpg", last_modified, "years", "Listagem de anos")
+		("Autores", "autores", "https://polemicbooks.github.io/images/authors.jpg", last_modified, "/opds/authors", "Listagem de autores"),
+		("Artistas", "artistas", "https://polemicbooks.github.io/images/artists.jpg", last_modified, "/opds/artists", "Listagem de artistas"),
+		("Narradores", "narradores", "https://polemicbooks.github.io/images/narrators.jpg", last_modified, "/opds/narrators", "Listagem de narradores"),
+		("Editoras", "editoras", "https://polemicbooks.github.io/images/publishers.jpg", last_modified, "/opds/publishers", "Listagem de editoras"),
+		("Categorias", "categorias", "https://polemicbooks.github.io/images/categories.jpg", last_modified, "/opds/categories", "Listagem de categorias"),
+		("Tipos", "tipos", "https://polemicbooks.github.io/images/types.jpg", last_modified, "/opds/types", "Listagem de tipos"),
+		("Anos", "anos", "https://polemicbooks.github.io/images/years.jpg", last_modified, "/opds/years", "Listagem de anos"),
+		("Recentes", "recentes", "https://polemicbooks.github.io/images/books.jpg", last_modified, "/opds/recent-books", "Livros recentes"),
+		("Antigos", "antigos", "https://polemicbooks.github.io/images/books.jpg", last_modified, "/opds/old-books", "Livros antigos")
 	]
 	
 	items = [
@@ -1413,7 +1462,7 @@ def opds_get_authors(
 			f"author:{entity.id}",
 			"https://polemicbooks.github.io/images/authors.jpg",
 			last_modified,
-			f"authors/{entity.id}",
+			f"/opds/authors/{entity.id}",
 			html.escape(f"Possui {entity.total_books} livro(s)")
 		) for entity in objects
 	]
@@ -1472,23 +1521,23 @@ def opds_get_books_by_author(
 	
 	for book in objects:
 		item = ""
-		item += f"<entry>\n  <title>{html.escape(book.title)}</title>"
+		item += f"<entry>\n  <title>{html.escape(book.title) if book.title is not None else 'Unknown'}</title>"
 		item += f"\n  <id>book:{book.id}</id>"
 		item += "\n  <updated>{}</updated>".format(
 			time.strftime(
 				"%a, %d %b %Y %H:%M:%S GMT", time.localtime(book.date))
 		)
-		item += f'\n  <link rel="http://opds-spec.org/image"\n        href="/view/{book.cover.id}"\n        type="{book.cover.mime_type}"/>'
-		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n        href="/download/{book.documents[0].id}"\n        type="{book.documents[0].mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/image"\n		href="/view/{book.cover.id}"\n		type="{book.cover.mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n		href="/download/{book.documents[0].id}"\n		type="{book.documents[0].mime_type}"/>'
 		if book.author is not None:
-			item += f"\n  <author>\n    <name>{html.escape(book.author.name)}</name>\n    <uri>/opds/authors/{book.author.id}</uri>\n  </author>"
+			item += f"\n  <author>\n	<name>{html.escape(book.author.name)}</name>\n	<uri>/opds/authors/{book.author.id}?page_number={page_number}</uri>\n  </author>"
 		item += "\n  <dc:language>pt</dc:language>"
 		if book.publisher is not None:
 			item += f"\n  <dc:publisher>{html.escape(book.publisher.name)}</dc:publisher>"
 		if book.year is not None:
 			item += f"\n  <dc:issued>{book.year.name}</dc:issued>"
 		if book.category is not None:
-			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n        term="{book.category.id}"\n        label="{html.escape(book.category.name)}"/>'
+			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
@@ -1511,8 +1560,7 @@ def opds_get_books_by_author(
 	
 	if next_page < total_pages:
 		base_feed += opds.NEXT_PAGE_BASE.format(
-			"authors",
-			next_page
+			"/opds/authors/{author_id}?page_number={next_page}"
 		)
 	
 	content = base_feed + "".join(items) + "</feed>"
@@ -1544,7 +1592,7 @@ def opds_get_artists(
 			f"artist:{entity.id}",
 			"https://polemicbooks.github.io/images/artists.jpg",
 			last_modified,
-			f"artists/{entity.id}",
+			f"/opds/artists/{entity.id}",
 			html.escape(f"Possui {entity.total_books} livro(s)")
 		) for entity in objects
 	]
@@ -1603,23 +1651,23 @@ def opds_get_books_by_artist(
 	
 	for book in objects:
 		item = ""
-		item += f"<entry>\n  <title>{html.escape(book.title)}</title>"
+		item += f"<entry>\n  <title>{html.escape(book.title) if book.title is not None else 'Unknown'}</title>"
 		item += f"\n  <id>book:{book.id}</id>"
 		item += "\n  <updated>{}</updated>".format(
 			time.strftime(
 				"%a, %d %b %Y %H:%M:%S GMT", time.localtime(book.date))
 		)
-		item += f'\n  <link rel="http://opds-spec.org/image"\n        href="/view/{book.cover.id}"\n        type="{book.cover.mime_type}"/>'
-		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n        href="/download/{book.documents[0].id}"\n        type="{book.documents[0].mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/image"\n		href="/view/{book.cover.id}"\n		type="{book.cover.mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n		href="/download/{book.documents[0].id}"\n		type="{book.documents[0].mime_type}"/>'
 		if book.author is not None:
-			item += f"\n  <author>\n    <name>{html.escape(book.author.name)}</name>\n    <uri>/opds/authors/{book.author.id}</uri>\n  </author>"
+			item += f"\n  <author>\n	<name>{html.escape(book.author.name)}</name>\n	<uri>/opds/authors/{book.author.id}?page_number={page_number}</uri>\n  </author>"
 		item += "\n  <dc:language>pt</dc:language>"
 		if book.publisher is not None:
 			item += f"\n  <dc:publisher>{html.escape(book.publisher.name)}</dc:publisher>"
 		if book.year is not None:
 			item += f"\n  <dc:issued>{book.year.name}</dc:issued>"
 		if book.category is not None:
-			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n        term="{book.category.id}"\n        label="{html.escape(book.category.name)}"/>'
+			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
@@ -1642,7 +1690,7 @@ def opds_get_books_by_artist(
 	
 	if next_page < total_pages:
 		base_feed += opds.NEXT_PAGE_BASE.format(
-			f"/opds/artists?page_number={next_page}"
+			f"/opds/artists/{artist_id}?page_number={next_page}"
 		)
 	
 	content = base_feed + "".join(items) + "</feed>"
@@ -1674,7 +1722,7 @@ def opds_get_narrators(
 			f"narrator:{entity.id}",
 			"https://polemicbooks.github.io/images/narrators.jpg",
 			last_modified,
-			f"narrators/{entity.id}",
+			f"/opds/narrators/{entity.id}",
 			html.escape(f"Possui {entity.total_books} livro(s)")
 		) for entity in objects
 	]
@@ -1733,23 +1781,23 @@ def opds_get_books_by_narrator(
 	
 	for book in objects:
 		item = ""
-		item += f"<entry>\n  <title>{html.escape(book.title)}</title>"
+		item += f"<entry>\n  <title>{html.escape(book.title) if book.title is not None else 'Unknown'}</title>"
 		item += f"\n  <id>book:{book.id}</id>"
 		item += "\n  <updated>{}</updated>".format(
 			time.strftime(
 				"%a, %d %b %Y %H:%M:%S GMT", time.localtime(book.date))
 		)
-		item += f'\n  <link rel="http://opds-spec.org/image"\n        href="/view/{book.cover.id}"\n        type="{book.cover.mime_type}"/>'
-		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n        href="/download/{book.documents[0].id}"\n        type="{book.documents[0].mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/image"\n		href="/view/{book.cover.id}"\n		type="{book.cover.mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n		href="/download/{book.documents[0].id}"\n		type="{book.documents[0].mime_type}"/>'
 		if book.author is not None:
-			item += f"\n  <author>\n    <name>{html.escape(book.author.name)}</name>\n    <uri>/opds/authors/{book.author.id}</uri>\n  </author>"
+			item += f"\n  <author>\n	<name>{html.escape(book.author.name)}</name>\n	<uri>/opds/authors/{book.author.id}?page_number={page_number}</uri>\n  </author>"
 		item += "\n  <dc:language>pt</dc:language>"
 		if book.publisher is not None:
 			item += f"\n  <dc:publisher>{html.escape(book.publisher.name)}</dc:publisher>"
 		if book.year is not None:
 			item += f"\n  <dc:issued>{book.year.name}</dc:issued>"
 		if book.category is not None:
-			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n        term="{book.category.id}"\n        label="{html.escape(book.category.name)}"/>'
+			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
@@ -1772,7 +1820,7 @@ def opds_get_books_by_narrator(
 	
 	if next_page < total_pages:
 		base_feed += opds.NEXT_PAGE_BASE.format(
-			f"/opds/narrators?page_number={next_page}"
+			f"/opds/narrators/{narrator_id}?page_number={next_page}"
 		)
 	
 	content = base_feed + "".join(items) + "</feed>"
@@ -1804,7 +1852,7 @@ def opds_get_publishers(
 			f"publisher:{entity.id}",
 			"https://polemicbooks.github.io/images/publishers.jpg",
 			last_modified,
-			f"publishers/{entity.id}",
+			f"/opds/publishers/{entity.id}",
 			html.escape(f"Possui {entity.total_books} livro(s)")
 		) for entity in objects
 	]
@@ -1817,7 +1865,7 @@ def opds_get_publishers(
 		"https://polemicbooks.github.io/images/publishers.jpg",
 		"Confira abaixo a lista de editoras"
 	) + opds.SELF_BASE.format(
-			f"publishers?page_number={page_number}"
+			f"/opds/publishers?page_number={page_number}"
 		)
 	
 	next_page = page_number + 1
@@ -1863,23 +1911,23 @@ def opds_get_books_by_publisher(
 	
 	for book in objects:
 		item = ""
-		item += f"<entry>\n  <title>{html.escape(book.title)}</title>"
+		item += f"<entry>\n  <title>{html.escape(book.title) if book.title is not None else 'Unknown'}</title>"
 		item += f"\n  <id>book:{book.id}</id>"
 		item += "\n  <updated>{}</updated>".format(
 			time.strftime(
 				"%a, %d %b %Y %H:%M:%S GMT", time.localtime(book.date))
 		)
-		item += f'\n  <link rel="http://opds-spec.org/image"\n        href="/view/{book.cover.id}"\n        type="{book.cover.mime_type}"/>'
-		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n        href="/download/{book.documents[0].id}"\n        type="{book.documents[0].mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/image"\n		href="/view/{book.cover.id}"\n		type="{book.cover.mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n		href="/download/{book.documents[0].id}"\n		type="{book.documents[0].mime_type}"/>'
 		if book.author is not None:
-			item += f"\n  <author>\n    <name>{html.escape(book.author.name)}</name>\n    <uri>/opds/authors/{book.author.id}</uri>\n  </author>"
+			item += f"\n  <author>\n	<name>{html.escape(book.author.name)}</name>\n	<uri>/opds/authors/{book.author.id}?page_number={page_number}</uri>\n  </author>"
 		item += "\n  <dc:language>pt</dc:language>"
 		if book.publisher is not None:
 			item += f"\n  <dc:publisher>{html.escape(book.publisher.name)}</dc:publisher>"
 		if book.year is not None:
 			item += f"\n  <dc:issued>{book.year.name}</dc:issued>"
 		if book.category is not None:
-			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n        term="{book.category.id}"\n        label="{html.escape(book.category.name)}"/>'
+			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
@@ -1902,7 +1950,7 @@ def opds_get_books_by_publisher(
 	
 	if next_page < total_pages:
 		base_feed += opds.NEXT_PAGE_BASE.format(
-			f"/opds/publishers?page_number={next_page}"
+			f"/opds/publishers/{publisher_id}?page_number={next_page}"
 		)
 	
 	content = base_feed + "".join(items) + "</feed>"
@@ -1934,7 +1982,7 @@ def opds_get_categories(
 			f"category:{entity.id}",
 			"https://polemicbooks.github.io/images/categories.jpg",
 			last_modified,
-			f"categories/{entity.id}",
+			f"/opds/categories/{entity.id}",
 			html.escape(f"Possui {entity.total_books} livro(s)")
 		) for entity in objects
 	]
@@ -1947,7 +1995,7 @@ def opds_get_categories(
 		"https://polemicbooks.github.io/images/categories.jpg",
 		"Confira abaixo a lista de categorias"
 	) + opds.SELF_BASE.format(
-			f"categories?page_number={page_number}"
+			f"/opds/categories?page_number={page_number}"
 		)
 	
 	next_page = page_number + 1
@@ -1993,23 +2041,23 @@ def opds_get_books_by_category(
 	
 	for book in objects:
 		item = ""
-		item += f"<entry>\n  <title>{html.escape(book.title)}</title>"
+		item += f"<entry>\n  <title>{html.escape(book.title) if book.title is not None else 'Unknown'}</title>"
 		item += f"\n  <id>book:{book.id}</id>"
 		item += "\n  <updated>{}</updated>".format(
 			time.strftime(
 				"%a, %d %b %Y %H:%M:%S GMT", time.localtime(book.date))
 		)
-		item += f'\n  <link rel="http://opds-spec.org/image"\n        href="/view/{book.cover.id}"\n        type="{book.cover.mime_type}"/>'
-		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n        href="/download/{book.documents[0].id}"\n        type="{book.documents[0].mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/image"\n		href="/view/{book.cover.id}"\n		type="{book.cover.mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n		href="/download/{book.documents[0].id}"\n		type="{book.documents[0].mime_type}"/>'
 		if book.author is not None:
-			item += f"\n  <author>\n    <name>{html.escape(book.author.name)}</name>\n    <uri>/opds/authors/{book.author.id}</uri>\n  </author>"
+			item += f"\n  <author>\n	<name>{html.escape(book.author.name)}</name>\n	<uri>/opds/authors/{book.author.id}?page_number={page_number}</uri>\n  </author>"
 		item += "\n  <dc:language>pt</dc:language>"
 		if book.publisher is not None:
 			item += f"\n  <dc:publisher>{html.escape(book.publisher.name)}</dc:publisher>"
 		if book.year is not None:
 			item += f"\n  <dc:issued>{book.year.name}</dc:issued>"
 		if book.category is not None:
-			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n        term="{book.category.id}"\n        label="{html.escape(book.category.name)}"/>'
+			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
@@ -2064,7 +2112,7 @@ def opds_get_types(
 			f"type:{entity.id}",
 			"https://polemicbooks.github.io/images/types.jpg",
 			last_modified,
-			f"types/{entity.id}",
+			f"/opds/types/{entity.id}",
 			html.escape(f"Possui {entity.total_books} livro(s)")
 		) for entity in objects
 	]
@@ -2077,7 +2125,7 @@ def opds_get_types(
 		"https://polemicbooks.github.io/images/types.jpg",
 		"Confira abaixo a lista de tipos"
 	) + opds.SELF_BASE.format(
-			f"types?page_number={page_number}"
+			f"/opds/types?page_number={page_number}"
 		)
 	
 	next_page = page_number + 1
@@ -2123,23 +2171,23 @@ def opds_get_books_by_type(
 	
 	for book in objects:
 		item = ""
-		item += f"<entry>\n  <title>{html.escape(book.title)}</title>"
+		item += f"<entry>\n  <title>{html.escape(book.title) if book.title is not None else 'Unknown'}</title>"
 		item += f"\n  <id>book:{book.id}</id>"
 		item += "\n  <updated>{}</updated>".format(
 			time.strftime(
 				"%a, %d %b %Y %H:%M:%S GMT", time.localtime(book.date))
 		)
-		item += f'\n  <link rel="http://opds-spec.org/image"\n        href="/view/{book.cover.id}"\n        type="{book.cover.mime_type}"/>'
-		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n        href="/download/{book.documents[0].id}"\n        type="{book.documents[0].mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/image"\n		href="/view/{book.cover.id}"\n		type="{book.cover.mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n		href="/download/{book.documents[0].id}"\n		type="{book.documents[0].mime_type}"/>'
 		if book.author is not None:
-			item += f"\n  <author>\n    <name>{html.escape(book.author.name)}</name>\n    <uri>/opds/authors/{book.author.id}</uri>\n  </author>"
+			item += f"\n  <author>\n	<name>{html.escape(book.author.name)}</name>\n	<uri>/opds/authors/{book.author.id}?page_number={page_number}</uri>\n  </author>"
 		item += "\n  <dc:language>pt</dc:language>"
 		if book.publisher is not None:
 			item += f"\n  <dc:publisher>{html.escape(book.publisher.name)}</dc:publisher>"
 		if book.year is not None:
 			item += f"\n  <dc:issued>{book.year.name}</dc:issued>"
 		if book.category is not None:
-			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n        term="{book.category.id}"\n        label="{html.escape(book.category.name)}"/>'
+			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
@@ -2194,7 +2242,7 @@ def opds_get_years(
 			f"year:{entity.id}",
 			"https://polemicbooks.github.io/images/years.jpg",
 			last_modified,
-			f"years/{entity.id}",
+			f"/opds/years/{entity.id}",
 			html.escape(f"Possui {entity.total_books} livro(s)")
 		) for entity in objects
 	]
@@ -2253,23 +2301,23 @@ def opds_get_books_by_year(
 	
 	for book in objects:
 		item = ""
-		item += f"<entry>\n  <title>{html.escape(book.title)}</title>"
+		item += f"<entry>\n  <title>{html.escape(book.title) if book.title is not None else 'Unknown'}</title>"
 		item += f"\n  <id>book:{book.id}</id>"
 		item += "\n  <updated>{}</updated>".format(
 			time.strftime(
 				"%a, %d %b %Y %H:%M:%S GMT", time.localtime(book.date))
 		)
-		item += f'\n  <link rel="http://opds-spec.org/image"\n        href="/view/{book.cover.id}"\n        type="{book.cover.mime_type}"/>'
-		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n        href="/download/{book.documents[0].id}"\n        type="{book.documents[0].mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/image"\n		href="/view/{book.cover.id}"\n		type="{book.cover.mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n		href="/download/{book.documents[0].id}"\n		type="{book.documents[0].mime_type}"/>'
 		if book.author is not None:
-			item += f"\n  <author>\n    <name>{html.escape(book.author.name)}</name>\n    <uri>/opds/authors/{book.author.id}</uri>\n  </author>"
+			item += f"\n  <author>\n	<name>{html.escape(book.author.name)}</name>\n	<uri>/opds/authors/{book.author.id}?page_number={page_number}</uri>\n  </author>"
 		item += "\n  <dc:language>pt</dc:language>"
 		if book.publisher is not None:
 			item += f"\n  <dc:publisher>{html.escape(book.publisher.name)}</dc:publisher>"
 		if book.year is not None:
 			item += f"\n  <dc:issued>{book.year.name}</dc:issued>"
 		if book.category is not None:
-			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n        term="{book.category.id}"\n        label="{html.escape(book.category.name)}"/>'
+			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
@@ -2334,23 +2382,23 @@ def opds_search_books(
 	
 	for book in objects:
 		item = ""
-		item += f"<entry>\n  <title>{html.escape(book.title)}</title>"
+		item += f"<entry>\n  <title>{html.escape(book.title) if book.title is not None else 'Unknown'}</title>"
 		item += f"\n  <id>book:{book.id}</id>"
 		item += "\n  <updated>{}</updated>".format(
 			time.strftime(
 				"%a, %d %b %Y %H:%M:%S GMT", time.localtime(book.date))
 		)
-		item += f'\n  <link rel="http://opds-spec.org/image"\n        href="/view/{book.cover.id}"\n        type="{book.cover.mime_type}"/>'
-		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n        href="/download/{book.documents[0].id}"\n        type="{book.documents[0].mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/image"\n		href="/view/{book.cover.id}"\n		type="{book.cover.mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n		href="/download/{book.documents[0].id}"\n		type="{book.documents[0].mime_type}"/>'
 		if book.author is not None:
-			item += f"\n  <author>\n    <name>{html.escape(book.author.name)}</name>\n    <uri>/opds/authors/{book.author.id}</uri>\n  </author>"
+			item += f"\n  <author>\n	<name>{html.escape(book.author.name)}</name>\n	<uri>/opds/authors/{book.author.id}?page_number={page_number}</uri>\n  </author>"
 		item += "\n  <dc:language>pt</dc:language>"
 		if book.publisher is not None:
 			item += f"\n  <dc:publisher>{html.escape(book.publisher.name)}</dc:publisher>"
 		if book.year is not None:
 			item += f"\n  <dc:issued>{book.year.name}</dc:issued>"
 		if book.category is not None:
-			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n        term="{book.category.id}"\n        label="{html.escape(book.category.name)}"/>'
+			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
 		item += f'<content type="xhtml">{html.escape(create_content(book))}'
@@ -2381,21 +2429,170 @@ def opds_search_books(
 	return Response(content=content, media_type="application/atom+xml")
 
 
-async def build_clients():
+@app.get("/opds/recent-books", tags=["opds"])
+def opds_recent_books(
+	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
+	max_items: Optional[int] = Query(10, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
+):
+	"""
+	Use este método para obter is livros publicados recentemente.
+	"""
 	
-	global pclient
-	global hclient
+	books = plmcbks.books.list()
+	books.reverse()
+	
+	objects_pagination = create_pagination(books, max_items)
+	
+	if page_number > len(objects_pagination):
+		content = {"error": "page_number value is out of range"}
+		status_code = status.HTTP_400_BAD_REQUEST
+		return ORJSONResponse(content=content, status_code=status_code)
+	
+	objects = objects_pagination[page_number]
+	
+	items = []
+	
+	for book in objects:
+		item = ""
+		item += f"<entry>\n  <title>{html.escape(book.title) if book.title is not None else 'Unknown'}</title>"
+		item += f"\n  <id>book:{book.id}</id>"
+		item += "\n  <updated>{}</updated>".format(
+			time.strftime(
+				"%a, %d %b %Y %H:%M:%S GMT", time.localtime(book.date))
+		)
+		item += f'\n  <link rel="http://opds-spec.org/image"\n		href="/view/{book.cover.id}"\n		type="{book.cover.mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n		href="/download/{book.documents[0].id}"\n		type="{book.documents[0].mime_type}"/>'
+		if book.author is not None:
+			item += f"\n  <author>\n	<name>{html.escape(book.author.name)}</name>\n	<uri>/opds/authors/{book.author.id}?page_number={page_number}</uri>\n  </author>"
+		item += "\n  <dc:language>pt</dc:language>"
+		if book.publisher is not None:
+			item += f"\n  <dc:publisher>{html.escape(book.publisher.name)}</dc:publisher>"
+		if book.year is not None:
+			item += f"\n  <dc:issued>{book.year.name}</dc:issued>"
+		if book.category is not None:
+			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
+		if book.type is not None:
+			item += f"\n  <summary>{book.type.name}</summary>"
+		item += f'<content type="xhtml">{html.escape(create_content(book))}'
+		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + "." + book.documents[0].file_extension if book.title is not None else "document." + book.documents[0].file_extension}</a></em>')
+		item += "</content>\n</entry>"
+		items.append(item)
+	
+	total_pages = len(objects_pagination) - 1 - page_number
+	
+	base_feed = opds.BASE.format(
+		html.escape(f"Livros adicionados recentemente ({page_number}/{total_pages})"),
+		last_modified,
+		"https://polemicbooks.github.io/images/books.jpg",
+		html.escape(f"Livros recentes")
+	) + opds.SELF_BASE.format(
+			f"/opds/recent-books?page_number={page_number}"
+		)
+	
+	next_page = page_number + 1
+	
+	if next_page < total_pages:
+		base_feed += opds.NEXT_PAGE_BASE.format(
+			f"/opds/recent-books?page_number={next_page}"
+		)
+	
+	content = base_feed + "".join(items) + "</feed>"
+	
+	return Response(content=content, media_type="application/atom+xml")
+
+
+@app.get("/opds/old-books", tags=["opds"])
+def opds_old_books(
+	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
+	max_items: Optional[int] = Query(10, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
+):
+	"""
+	Use este método para obter os livros antigos.
+	"""
+	
+	books = plmcbks.books.list()
+	
+	objects_pagination = create_pagination(books, max_items)
+	
+	if page_number > len(objects_pagination):
+		content = {"error": "page_number value is out of range"}
+		status_code = status.HTTP_400_BAD_REQUEST
+		return ORJSONResponse(content=content, status_code=status_code)
+	
+	objects = objects_pagination[page_number]
+	
+	items = []
+	
+	for book in objects:
+		item = ""
+		item += f"<entry>\n  <title>{html.escape(book.title) if book.title is not None else 'Unknown'}</title>"
+		item += f"\n  <id>book:{book.id}</id>"
+		item += "\n  <updated>{}</updated>".format(
+			time.strftime(
+				"%a, %d %b %Y %H:%M:%S GMT", time.localtime(book.date))
+		)
+		item += f'\n  <link rel="http://opds-spec.org/image"\n		href="/view/{book.cover.id}"\n		type="{book.cover.mime_type}"/>'
+		item += f'\n  <link rel="http://opds-spec.org/acquisition"\n		href="/download/{book.documents[0].id}"\n		type="{book.documents[0].mime_type}"/>'
+		if book.author is not None:
+			item += f"\n  <author>\n	<name>{html.escape(book.author.name)}</name>\n	<uri>/opds/authors/{book.author.id}?page_number={page_number}</uri>\n  </author>"
+		item += "\n  <dc:language>pt</dc:language>"
+		if book.publisher is not None:
+			item += f"\n  <dc:publisher>{html.escape(book.publisher.name)}</dc:publisher>"
+		if book.year is not None:
+			item += f"\n  <dc:issued>{book.year.name}</dc:issued>"
+		if book.category is not None:
+			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
+		if book.type is not None:
+			item += f"\n  <summary>{book.type.name}</summary>"
+		item += f'<content type="xhtml">{html.escape(create_content(book))}'
+		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + "." + book.documents[0].file_extension if book.title is not None else "document." + book.documents[0].file_extension}</a></em>')
+		item += "</content>\n</entry>"
+		items.append(item)
+	
+	total_pages = len(objects_pagination) - 1 - page_number
+	
+	base_feed = opds.BASE.format(
+		html.escape(f"Livros antigos ({page_number}/{total_pages})"),
+		last_modified,
+		"https://polemicbooks.github.io/images/books.jpg",
+		html.escape(f"Livros antigos")
+	) + opds.SELF_BASE.format(
+			f"/opds/old-books?page_number={page_number}"
+		)
+	
+	next_page = page_number + 1
+	
+	if next_page < total_pages:
+		base_feed += opds.NEXT_PAGE_BASE.format(
+			f"/opds/old-books?page_number={next_page}"
+		)
+	
+	content = base_feed + "".join(items) + "</feed>"
+	
+	return Response(content=content, media_type="application/atom+xml")
+
+
+async def build_clients() -> None:
+	"""
+	Este método cria os clientes do Pyrogram (para acesso a API do Telegram) e
+	AioHTTP (para requisições HTTP em geral).
+	"""
+	
+	global pclient # Pyrogram client
+	global httpclient # AioHTTP client
+	
+	global clients_ok
 	
 	# Pyrogram client
 	pclient = pyrogram.Client(**config.PYROGRAM_OPTIONS)
 	await pclient.start()
 	
-	# AioHTTP client
-	resolver = aiohttp.resolver.AsyncResolver(nameservers=resolvers.NAMESERVERS)
-	connector = aiohttp.TCPConnector(limit=0, resolver=resolver, ttl_dns_cache=3600)
-	hclient = aiohttp.ClientSession(connector=connector)
+	resolver = aiohttp.resolver.AsyncResolver(nameservers=["1.1.1.1", "1.0.0.1"])
+	connector = aiohttp.TCPConnector(limit=0, resolver=resolver, ttl_dns_cache=3600 * 5)
+	httpclient = aiohttp.ClientSession(connector=connector)
 	
-
+	clients_ok = True
+	
 if __name__ == "__main__":
 	
 	parser = argparse.ArgumentParser()
@@ -2410,7 +2607,8 @@ if __name__ == "__main__":
 		host=options.host,
 		port=options.port,
 		access_log=False,
-		log_level="error"
+		log_level="error",
+		headers=headers.HTTP_HEADERS
 	)
 
 	
