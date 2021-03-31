@@ -17,7 +17,7 @@ A API se baseia na estrutura de dados JSON e processa dados a partir de parâmet
 
 ### OPDS
 
-O feed OPDS se baseia na estrutura de dados XML e processa dados a partir de parâmetros em requisições GET e valores associados a URI. A especificação atualmente seguida é o [OPDS 1.2](https://specs.opds.io/opds-1.2).
+O catálogo OPDS se baseia na estrutura de dados XML e processa dados a partir de parâmetros em requisições GET e valores associados a URI. A especificação atualmente seguida é o [OPDS 1.2](https://specs.opds.io/opds-1.2).
 
 ### RSS
 
