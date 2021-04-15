@@ -2508,7 +2508,7 @@ def opds_recent_books(
 @app.get("/opds/old-books", tags=["opds"])
 def opds_old_books(
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(10, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
 ):
 	"""
 	Use este método para obter os livros antigos.
