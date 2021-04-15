@@ -52,7 +52,7 @@ command = [
 	"--upgrade",
 	"fastapi",
 	"orjson",
-	"uvicorn[standard]",
+	"uvicorn",
 	"tgcrypto",
 	"aiohttp[speedups]",
 	"git+https://github.com/SnwMds/pyrogram#egg=Pyrogram",
