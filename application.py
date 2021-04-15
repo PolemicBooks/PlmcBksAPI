@@ -1337,7 +1337,9 @@ async def view_cover_by_id(
 		request = httpclient.build_request("GET", f"https://drive.google.com/uc?id={cover.file_gdrive_id}")
 		response = await httpclient.send(request, stream=True)
 		
-		if re.match(r"^https://doc-[0-9a-z]+-[0-9a-z]+-docs\.googleusercontent\.com/.+", str(response.url)):
+		url = str(response.url)
+		
+		if re.match(r"^https://doc-[0-9a-z]+-[0-9a-z]+-docs\.googleusercontent\.com/.+", url):
 			if response.status_code == 200:
 				headers["Content-Location"] = url
 				content_streaming = stream_from_response(response)
