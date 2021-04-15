@@ -13,7 +13,7 @@ import sys
 import re
 
 # Third-party packages
-import aiohttp
+import httpx
 from fastapi import (
 	FastAPI,
 	Header,
@@ -1334,7 +1334,7 @@ async def view_cover_by_id(
 	}
 	
 	if cover.file_gdrive_id is not None:
-		async with httpclient.get(f"https://drive.google.com/uc?id={cover.file_gdrive_id}") as response:
+		async with httpclient.stream('GET', f"https://drive.google.com/uc?id={cover.file_gdrive_id}") as response:
 			url = str(response.url)
 		
 		if re.match(r"^https://doc-[0-9a-z]+-[0-9a-z]+-docs\.googleusercontent\.com/.+", url):
@@ -2587,9 +2587,7 @@ async def build_clients() -> None:
 	pclient = pyrogram.Client(**config.PYROGRAM_OPTIONS)
 	await pclient.start()
 	
-	resolver = aiohttp.resolver.AsyncResolver(nameservers=["1.1.1.1", "1.0.0.1"])
-	connector = aiohttp.TCPConnector(limit=0, resolver=resolver, ttl_dns_cache=3600 * 5)
-	httpclient = aiohttp.ClientSession(connector=connector)
+	httpclient = httpx.AsyncClient(http2=True)
 	
 	clients_ok = True
 	

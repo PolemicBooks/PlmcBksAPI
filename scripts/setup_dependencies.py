@@ -47,7 +47,7 @@ command = [
 	"orjson",
 	"uvicorn",
 	"tgcrypto",
-	"aiohttp[speedups]",
+	"httpx[http2]",
 	"git+https://github.com/SnwMds/pyrogram#egg=Pyrogram",
 	"git+https://github.com/PolemicBooks/PlmcBks"
 ]
