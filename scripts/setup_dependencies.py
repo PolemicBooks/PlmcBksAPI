@@ -4,13 +4,6 @@
 
 import subprocess
 import os
-import platform
-
-major, minor, micro = platform.python_version_tuple()
-python_version = float(f"{major}.{minor}")
-
-if not python_version >= 3.6:
-	raise ValueError(f"Python {python_version} is not supported!")
 
 virtualenv = f"{os.getcwd()}/virtualenv"
 
