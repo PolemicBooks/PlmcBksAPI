@@ -1338,7 +1338,7 @@ async def view_cover_by_id(
 			url = str(response.url)
 		
 		if re.match(r"^https://doc-[0-9a-z]+-[0-9a-z]+-docs\.googleusercontent\.com/.+", url):
-			if response.status == 200:
+			if response.status_code == 200:
 				headers["Content-Location"] = url
 				content_streaming = stream_from_url(httpclient, url)
 				return StreamingResponse(content_streaming, headers=headers)
