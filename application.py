@@ -1441,7 +1441,7 @@ def opds_home():
 @app.get("/opds/authors", tags=["opds"])
 def opds_get_authors(
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todos os autores disponíveis.
@@ -1494,7 +1494,7 @@ def opds_get_authors(
 def opds_get_books_by_author(
 	author_id: int = Path(..., title="Identificação numérica do autor", description="Identificação do autor.", ge=limits.MIN_ID, le=limits.MAX_ID),
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todos os livros escritos pelo autor em questão.
@@ -1571,7 +1571,7 @@ def opds_get_books_by_author(
 @app.get("/opds/artists", tags=["opds"])
 def opds_get_artists(
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todos os artistas disponíveis.
@@ -1624,7 +1624,7 @@ def opds_get_artists(
 def opds_get_books_by_artist(
 	artist_id: int = Path(..., title="Identificação numérica do autor", description="Identificação do autor.", ge=limits.MIN_ID, le=limits.MAX_ID),
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todos os livros ilustrados pelo artista em questão.
@@ -1701,7 +1701,7 @@ def opds_get_books_by_artist(
 @app.get("/opds/narrators", tags=["opds"])
 def opds_get_narrators(
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todos os narradores disponíveis.
@@ -1754,7 +1754,7 @@ def opds_get_narrators(
 def opds_get_books_by_narrator(
 	narrator_id: int = Path(..., title="Identificação numérica do autor", description="Identificação do autor.", ge=limits.MIN_ID, le=limits.MAX_ID),
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todos os livros narrados pelo narrador em questão.
@@ -1831,7 +1831,7 @@ def opds_get_books_by_narrator(
 @app.get("/opds/publishers", tags=["opds"])
 def opds_get_publishers(
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todas as editoras disponíveis.
@@ -1884,7 +1884,7 @@ def opds_get_publishers(
 def opds_get_books_by_publisher(
 	publisher_id: int = Path(..., title="Identificação numérica do autor", description="Identificação do autor.", ge=limits.MIN_ID, le=limits.MAX_ID),
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todos os livros publicados pela editora editora em questão.
@@ -1961,7 +1961,7 @@ def opds_get_books_by_publisher(
 @app.get("/opds/categories", tags=["opds"])
 def opds_get_categories(
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todas as categorias disponíveis.
@@ -2014,7 +2014,7 @@ def opds_get_categories(
 def opds_get_books_by_category(
 	category_id: int = Path(..., title="Identificação numérica do autor", description="Identificação do autor.", ge=limits.MIN_ID, le=limits.MAX_ID),
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todos os livros presentes na categoria em questão.
@@ -2091,7 +2091,7 @@ def opds_get_books_by_category(
 @app.get("/opds/types", tags=["opds"])
 def opds_get_types(
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todos os tipos disponíveis.
@@ -2144,7 +2144,7 @@ def opds_get_types(
 def opds_get_books_by_type(
 	type_id: int = Path(..., title="Identificação numérica do autor", description="Identificação do autor.", ge=limits.MIN_ID, le=limits.MAX_ID),
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todos os livros do tipo em questão.
@@ -2221,7 +2221,7 @@ def opds_get_books_by_type(
 @app.get("/opds/years", tags=["opds"])
 def opds_get_years(
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade máxima de itens", description="Quantidade máxima de itens", ge=limits.MIN_FEED_ITEMS, le=limits.MAX_FEED_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todos os anos disponíveis.
@@ -2274,7 +2274,7 @@ def opds_get_years(
 def opds_get_books_by_year(
 	year_id: int = Path(..., title="Identificação numérica do autor", description="Identificação do autor.", ge=limits.MIN_ID, le=limits.MAX_ID),
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(15, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
 ):
 	"""
 	Este método retornará uma lista contendo todos os livros publicados no ano em questão.
@@ -2353,7 +2353,7 @@ def opds_search_books(
 	query_name: str = Query(..., title="Termo a ser pesquisado", description="Termo a ser pesquisado", min_length=limits.MIN_QUERY_LENGTH, max_length=limits.MAX_QUERY_LENGTH),
 	search_type: Optional[str] = Query("fast", title="Tipo de pesquisa", description="Tipo de pesquisa", regex="^(?:fast|slow)$"),
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(10, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
 ):
 	"""
 	Use este método para pesquisar por livros.
@@ -2432,7 +2432,7 @@ def opds_search_books(
 @app.get("/opds/recent-books", tags=["opds"])
 def opds_recent_books(
 	page_number: Optional[int] = Query(0, title="Posição da página", description="Posição da página", ge=limits.MIN_PAGE_NUMBER, le=limits.MAX_PAGE_NUMBER),
-	max_items: Optional[int] = Query(10, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
+	max_items: Optional[int] = Query(100, title="Quantidade de itens", description="Quantidade máxima de itens", ge=limits.MIN_PAGE_ITEMS, le=limits.MAX_PAGE_ITEMS)
 ):
 	"""
 	Use este método para obter is livros publicados recentemente.
