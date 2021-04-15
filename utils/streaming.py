@@ -1,6 +1,9 @@
-async def stream_from_url(client, media_url):
+async def stream_from_response(response):
 	
-	async with client.get(media_url) as response:
-		async for chunk in response.aiter_bytes():
-			yield media_bytes
-		return
+	async for chunk in response.aiter_bytes():
+		yield media_bytes
+	
+	await response.aclose()
+	
+	return
+	

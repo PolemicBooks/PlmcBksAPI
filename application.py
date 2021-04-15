@@ -44,7 +44,7 @@ from config.resolvers import resolvers
 from config.headers import headers
 
 # Utils
-from utils.streaming import stream_from_url
+from utils.streaming import stream_from_response
 from utils.books import create_caption
 from utils.opds import create_content
 from utils.paginations import create_pagination
@@ -1334,17 +1334,19 @@ async def view_cover_by_id(
 	}
 	
 	if cover.file_gdrive_id is not None:
-		async with httpclient.stream('GET', f"https://drive.google.com/uc?id={cover.file_gdrive_id}") as response:
-			url = str(response.url)
+		request = httpclient.build_request("GET", f"https://drive.google.com/uc?id={cover.file_gdrive_id}")
+		response = await httpclient.send(request, stream=True)
 		
-		if re.match(r"^https://doc-[0-9a-z]+-[0-9a-z]+-docs\.googleusercontent\.com/.+", url):
+		if re.match(r"^https://doc-[0-9a-z]+-[0-9a-z]+-docs\.googleusercontent\.com/.+", str(response.url)):
 			if response.status_code == 200:
 				headers["Content-Location"] = url
-				content_streaming = stream_from_url(httpclient, url)
+				content_streaming = stream_from_response(response)
 				return StreamingResponse(content_streaming, headers=headers)
 				
 			status_code = status.HTTP_302_FOUND
 			return RedirectResponse(url=url, status_code=status_code)
+	
+	await response.aclose()
 	
 	try:
 		message = await pclient.get_messages(
