@@ -1,6 +1,6 @@
 ## PlmcBksAPI
 
-PlmcBksAPI é uma API HTTP e um feed RSS, e catálogo OPDS escrito usando Python3 e o framework FastAPI.
+PlmcBksAPI é uma API HTTP, feed RSS e catálogo OPDS escrito usando Python3 e o framework FastAPI.
 
 ## Instâncias
 
