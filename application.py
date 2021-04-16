@@ -1380,7 +1380,7 @@ def rss_feed(
 	
 	items = (
 		rss.ITEM_BASE.format(
-			html.escape(book.title),
+			html.escape(book.title) if book.title is not None else "Unknown",
 			urls.PRIVATE_CHAT_URL + '/' + str(book.message_id),
 			urls.PRIVATE_CHAT_URL + '/' + str(book.message_id),
 			urls.API_URL + "/download/" + str(book.documents[0].message_id), book.documents[0].file_size, book.documents[0].mime_type,
