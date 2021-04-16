@@ -44,7 +44,6 @@ command = [
 	"--no-warn-script-location",
 	"--upgrade",
 	"fastapi",
-	"orjson",
 	"uvicorn",
 	"tgcrypto",
 	"httpx[http2]",

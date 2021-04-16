@@ -24,7 +24,7 @@ from fastapi import (
 	status
 )
 from fastapi.responses import (
-	ORJSONResponse,
+	JSONResponse,
 	StreamingResponse,
 	RedirectResponse
 )
@@ -57,7 +57,7 @@ app = FastAPI(
 	openapi_tags=openapi.TAGS,
 	docs_url="/",
 	redoc_url=None,
-	default_response_class=ORJSONResponse
+	default_response_class=JSONResponse
 )
 
 books_list = list(plmcbks.books)
@@ -97,7 +97,7 @@ def get_books(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -133,7 +133,7 @@ def get_book_by_id(
 	if book is None:
 		content = {"error": "book not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	return dict(book)
 
@@ -152,7 +152,7 @@ def get_categories(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -190,7 +190,7 @@ def get_books_by_category(
 	if category is None:
 		content = {"error": "category not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = category.get_books(plmcbks.books)
 	objects_pagination = create_pagination(list(books), max_items)
@@ -198,7 +198,7 @@ def get_books_by_category(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -235,7 +235,7 @@ def get_authors(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -273,7 +273,7 @@ def get_books_by_author(
 	if author is None:
 		content = {"error": "author not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = author.get_books(plmcbks.books)
 	objects_pagination = create_pagination(list(books), max_items)
@@ -281,7 +281,7 @@ def get_books_by_author(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -318,7 +318,7 @@ def get_artists(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -356,7 +356,7 @@ def get_books_by_artist(
 	if artist is None:
 		content = {"error": "artist not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = artist.get_books(plmcbks.books)
 	objects_pagination = create_pagination(list(books), max_items)
@@ -364,7 +364,7 @@ def get_books_by_artist(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -401,7 +401,7 @@ def get_narrators(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -439,7 +439,7 @@ def get_books_by_narrator(
 	if narrator is None:
 		content = {"error": "narrator not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = narrator.get_books(plmcbks.books)
 	objects_pagination = create_pagination(list(books), max_items)
@@ -447,7 +447,7 @@ def get_books_by_narrator(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -484,7 +484,7 @@ def get_publishers(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -522,7 +522,7 @@ def get_books_by_publisher(
 	if publisher is None:
 		content = {"error": "publisher not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = publisher.get_books(plmcbks.books)
 	objects_pagination = create_pagination(list(books), max_items)
@@ -530,7 +530,7 @@ def get_books_by_publisher(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -567,7 +567,7 @@ def get_types(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -605,7 +605,7 @@ def get_books_by_type(
 	if type is None:
 		content = {"error": "type not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = type.get_books(plmcbks.books)
 	objects_pagination = create_pagination(list(books), max_items)
@@ -613,7 +613,7 @@ def get_books_by_type(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -650,7 +650,7 @@ def get_years(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -688,7 +688,7 @@ def get_books_by_year(
 	if year is None:
 		content = {"error": "year not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = year.get_books(plmcbks.books)
 	objects_pagination = create_pagination(list(books), max_items)
@@ -696,7 +696,7 @@ def get_books_by_year(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -738,14 +738,14 @@ def search_books(
 	if not results:
 		content = {"error": "no books found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects_pagination = create_pagination(list(results), max_items)
 	
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -787,14 +787,14 @@ def search_authors(
 	if not results:
 		content = {"error": "no authors found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects_pagination = create_pagination(list(results), max_items)
 	
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -836,14 +836,14 @@ def search_artists(
 	if not results:
 		content = {"error": "no artists found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects_pagination = create_pagination(list(results), max_items)
 	
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -885,14 +885,14 @@ def search_narrators(
 	if not results:
 		content = {"error": "no narrators found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects_pagination = create_pagination(list(results), max_items)
 	
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -934,14 +934,14 @@ def search_publishers(
 	if not results:
 		content = {"error": "no publishers found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects_pagination = create_pagination(list(results), max_items)
 	
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -983,14 +983,14 @@ def search_categories(
 	if not results:
 		content = {"error": "no categories found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects_pagination = create_pagination(list(results), max_items)
 	
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -1032,14 +1032,14 @@ def search_types(
 	if not results:
 		content = {"error": "no types found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects_pagination = create_pagination(list(results), max_items)
 	
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -1081,14 +1081,14 @@ def search_years(
 	if not results:
 		content = {"error": "no years found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects_pagination = create_pagination(list(results), max_items)
 	
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -1125,7 +1125,7 @@ def get_documents(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -1161,7 +1161,7 @@ def get_document_by_id(
 	if document is None:
 		content = {"error": "document not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	return dict(document)
 
@@ -1185,7 +1185,7 @@ async def download_document_by_id(
 			content = {"error": f"too many requests, retry after {remaining_seconds} seconds"}
 			headers = {"Retry-After": str(remaining_seconds)}
 			status_code = status.HTTP_503_SERVICE_UNAVAILABLE
-			return ORJSONResponse(
+			return JSONResponse(
 				content=content, status_code=status_code, headers=headers)
 		else:
 			rate_limit = None
@@ -1196,7 +1196,7 @@ async def download_document_by_id(
 	if document is None:
 		content = {"error": "document not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	headers = {
 		"Last-Modified": time.strftime(
@@ -1229,7 +1229,7 @@ async def download_document_by_id(
 		content = {"error": "we don't have enough resources to serve this file at this moment"}
 		headers = {"Retry-After": str(e.x)}
 		status_code = status.HTTP_503_SERVICE_UNAVAILABLE
-		return ORJSONResponse(
+		return JSONResponse(
 			content=content, status_code=status_code, headers=headers)
 	else:
 		content = await pclient.stream_media(message)
@@ -1251,7 +1251,7 @@ def get_covers(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -1287,7 +1287,7 @@ def get_cover_by_id(
 	if cover is None:
 		content = {"error": "cover not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	return dict(cover)
 
@@ -1311,7 +1311,7 @@ async def view_cover_by_id(
 			content = {"error": f"too many requests, retry after {remaining_seconds} seconds"}
 			headers = {"Retry-After": str(remaining_seconds)}
 			status_code = status.HTTP_503_SERVICE_UNAVAILABLE
-			return ORJSONResponse(
+			return JSONResponse(
 				content=content, status_code=status_code, headers=headers)
 		else:
 			rate_limit = None
@@ -1322,7 +1322,7 @@ async def view_cover_by_id(
 	if cover is None:
 		content = {"error": "cover not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	headers = {
 		"Last-Modified": time.strftime(
@@ -1359,7 +1359,7 @@ async def view_cover_by_id(
 		content = {"error": "we don't have enough resources to serve this file at this moment"}
 		headers = {"Retry-After": str(e.x)}
 		status_code = status.HTTP_503_SERVICE_UNAVAILABLE
-		return ORJSONResponse(
+		return JSONResponse(
 			content=content, status_code=status_code, headers=headers)
 	else:
 		content = await pclient.stream_media(message)
@@ -1456,7 +1456,7 @@ def opds_get_authors(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -1509,7 +1509,7 @@ def opds_get_books_by_author(
 	if author is None:
 		content = {"error": "author not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = author.get_books(plmcbks.books)
 	objects_pagination = create_pagination(books.list(), max_items)
@@ -1517,7 +1517,7 @@ def opds_get_books_by_author(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -1586,7 +1586,7 @@ def opds_get_artists(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -1639,7 +1639,7 @@ def opds_get_books_by_artist(
 	if artist is None:
 		content = {"error": "artist not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = artist.get_books(plmcbks.books)
 	objects_pagination = create_pagination(books.list(), max_items)
@@ -1647,7 +1647,7 @@ def opds_get_books_by_artist(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -1716,7 +1716,7 @@ def opds_get_narrators(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -1769,7 +1769,7 @@ def opds_get_books_by_narrator(
 	if narrator is None:
 		content = {"error": "narrator not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = narrator.get_books(plmcbks.books)
 	objects_pagination = create_pagination(books.list(), max_items)
@@ -1777,7 +1777,7 @@ def opds_get_books_by_narrator(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -1846,7 +1846,7 @@ def opds_get_publishers(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -1899,7 +1899,7 @@ def opds_get_books_by_publisher(
 	if publisher is None:
 		content = {"error": "publisher not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = publisher.get_books(plmcbks.books)
 	objects_pagination = create_pagination(books.list(), max_items)
@@ -1907,7 +1907,7 @@ def opds_get_books_by_publisher(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -1976,7 +1976,7 @@ def opds_get_categories(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -2029,7 +2029,7 @@ def opds_get_books_by_category(
 	if category is None:
 		content = {"error": "category not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = category.get_books(plmcbks.books)
 	objects_pagination = create_pagination(books.list(), max_items)
@@ -2037,7 +2037,7 @@ def opds_get_books_by_category(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -2106,7 +2106,7 @@ def opds_get_types(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -2159,7 +2159,7 @@ def opds_get_books_by_type(
 	if type is None:
 		content = {"error": "type not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = type.get_books(plmcbks.books)
 	objects_pagination = create_pagination(books.list(), max_items)
@@ -2167,7 +2167,7 @@ def opds_get_books_by_type(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -2236,7 +2236,7 @@ def opds_get_years(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -2289,7 +2289,7 @@ def opds_get_books_by_year(
 	if year is None:
 		content = {"error": "year not found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	books = year.get_books(plmcbks.books)
 	objects_pagination = create_pagination(books.list(), max_items)
@@ -2297,7 +2297,7 @@ def opds_get_books_by_year(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -2371,14 +2371,14 @@ def opds_search_books(
 	if not results:
 		content = {"error": "no books found"}
 		status_code = status.HTTP_404_NOT_FOUND
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects_pagination = create_pagination(results.list(), max_items)
 	
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -2450,7 +2450,7 @@ def opds_recent_books(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
@@ -2521,7 +2521,7 @@ def opds_old_books(
 	if page_number > len(objects_pagination):
 		content = {"error": "page_number value is out of range"}
 		status_code = status.HTTP_400_BAD_REQUEST
-		return ORJSONResponse(content=content, status_code=status_code)
+		return JSONResponse(content=content, status_code=status_code)
 	
 	objects = objects_pagination[page_number]
 	
