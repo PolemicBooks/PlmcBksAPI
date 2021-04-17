@@ -1334,21 +1334,22 @@ async def view_cover_by_id(
 	}
 	
 	if cover.file_gdrive_id is not None:
-		request = httpclient.build_request("GET", f"https://drive.google.com/uc?id={cover.file_gdrive_id}")
-		response = await httpclient.send(request, stream=True)
 		
-		url = str(response.url)
+		client = httpx.AsyncClient(http2=True)
 		
-		if re.match(r"^https://doc-[0-9a-z]+-[0-9a-z]+-docs\.googleusercontent\.com/.+", url):
+		request = client.build_request("GET", f"https://drive.google.com/uc?id={cover.file_gdrive_id}")
+		response = await client.send(request, stream=True)
+		
+		if re.match(r"^https://doc-[0-9a-z]+-[0-9a-z]+-docs\.googleusercontent\.com/.+", str(response.url)):
 			if response.status_code == 200:
-				headers["Content-Location"] = url
-				content_streaming = stream_from_response(response)
+				content_streaming = stream_from_response(client, response)
 				return StreamingResponse(content_streaming, headers=headers)
 				
 			status_code = status.HTTP_302_FOUND
 			return RedirectResponse(url=url, status_code=status_code)
 	
 	await response.aclose()
+	await client.aclose()
 	
 	try:
 		message = await pclient.get_messages(
