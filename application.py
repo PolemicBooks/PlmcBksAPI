@@ -72,7 +72,6 @@ covers_list = list(plmcbks.covers)
 documents_list = list(plmcbks.documents)
 
 pclient = None
-httpclient = None
 
 rate_limit = None
 last_modified = time.strftime(
@@ -1335,7 +1334,7 @@ async def view_cover_by_id(
 	
 	if cover.file_gdrive_id is not None:
 		
-		client = httpx.AsyncClient(http2=True)
+		client = httpx.AsyncClient(http2=True, timeout=30)
 		
 		request = client.build_request("GET", f"https://drive.google.com/uc?id={cover.file_gdrive_id}")
 		response = await client.send(request, stream=True)
@@ -2584,15 +2583,12 @@ async def build_clients() -> None:
 	"""
 	
 	global pclient # Pyrogram client
-	global httpclient # AioHTTP client
 	
 	global clients_ok
 	
 	# Pyrogram client
 	pclient = pyrogram.Client(**config.PYROGRAM_OPTIONS)
 	await pclient.start()
-	
-	httpclient = httpx.AsyncClient(http2=True)
 	
 	clients_ok = True
 	
