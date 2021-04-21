@@ -13,7 +13,6 @@ import sys
 import re
 
 # Third-party packages
-import httpx
 from fastapi import (
 	FastAPI,
 	Header,
@@ -26,7 +25,8 @@ from fastapi import (
 from fastapi.responses import (
 	JSONResponse,
 	StreamingResponse,
-	RedirectResponse
+	RedirectResponse,
+	FileResponse
 )
 from plmcbks.config.files import LAST_MODIFIED
 from pyrogram.errors import FloodWait
@@ -1299,22 +1299,6 @@ async def view_cover_by_id(
 	Use este método para visualizar a imagem de capa em questão.
 	"""
 	
-	global rate_limit
-	
-	if not clients_ok:
-		await build_clients()
-	
-	if rate_limit:
-		remaining_seconds = int(time.time()) - rate_limit
-		if remaining_seconds > 0:
-			content = {"error": f"too many requests, retry after {remaining_seconds} seconds"}
-			headers = {"Retry-After": str(remaining_seconds)}
-			status_code = status.HTTP_503_SERVICE_UNAVAILABLE
-			return JSONResponse(
-				content=content, status_code=status_code, headers=headers)
-		else:
-			rate_limit = None
-	
 	cover = plmcbks.covers.get(cover_id)
 	book = cover.get_book(plmcbks.books)
 	
@@ -1332,39 +1316,14 @@ async def view_cover_by_id(
 			urllib.parse.quote(f"{book.title}.{cover.file_extension}" if book.title is not None else f"cover.{cover.file_extension}")),
 	}
 	
-	if cover.file_gdrive_id is not None:
-		
-		client = httpx.AsyncClient(http2=True, timeout=30)
-		
-		request = client.build_request("GET", f"https://drive.google.com/uc?id={cover.file_gdrive_id}")
-		response = await client.send(request, stream=True)
-		
-		if re.match(r"^https://doc-[0-9a-z]+-[0-9a-z]+-docs\.googleusercontent\.com/.+", str(response.url)):
-			if response.status_code == 200:
-				content_streaming = stream_from_response(client, response)
-				return StreamingResponse(content_streaming, headers=headers)
-				
-			status_code = status.HTTP_302_FOUND
-			return RedirectResponse(url=url, status_code=status_code)
+	filename = f"./images/covers/{cover.file_unique_id}.jpg"
 	
-	await response.aclose()
-	await client.aclose()
+	if os.path.exists():
+		return FileResponse(path=filename, headers=headers)
 	
-	try:
-		message = await pclient.get_messages(
-			chat_id=-1001436494509, message_ids=cover.message_id)
-	except FloodWait as e:
-		rate_limit = int(time.time()) + e.x
-		
-		content = {"error": "we don't have enough resources to serve this file at this moment"}
-		headers = {"Retry-After": str(e.x)}
-		status_code = status.HTTP_503_SERVICE_UNAVAILABLE
-		return JSONResponse(
-			content=content, status_code=status_code, headers=headers)
-	else:
-		content = await pclient.stream_media(message)
-	
-	return StreamingResponse(content=content, headers=headers)
+	content = {"error": "cover not found"}
+	status_code = status.HTTP_404_NOT_FOUND
+	return JSONResponse(content=content, status_code=status_code)
 
 
 @app.get("/rss", tags=["rss"])
