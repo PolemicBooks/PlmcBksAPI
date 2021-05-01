@@ -46,9 +46,8 @@ command = [
 	"fastapi",
 	"uvicorn",
 	"tgcrypto",
-	"httpx[http2]",
 	"git+https://github.com/SnwMds/pyrogram#egg=Pyrogram",
-	"git+https://github.com/PolemicBooks/PlmcBks"
+	"git+https://github.com/PolemicBooks/PlmcBks@88fd2e4fc17361cde67f8a069872677ea7ac51a4"
 ]
 
 subprocess.call(command)
