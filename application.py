@@ -1206,19 +1206,6 @@ async def download_document_by_id(
 			urllib.parse.quote(f"{book.title}.{document.file_extension}" if book.title is not None else f"cover.{cover.file_extension}")),
 	}
 	
-	if document.file_gdrive_id is not None:
-		async with httpclient.get(f"https://drive.google.com/uc?id={document.file_gdrive_id}") as response:
-			url = str(response.url)
-		
-		if re.match(r"^https://doc-[0-9a-z]+-[0-9a-z]+-docs\.googleusercontent\.com/.+", url):
-			if response.status == 200:
-				headers["Content-Location"] = url
-				content_streaming = stream_from_url(httpclient, url)
-				return StreamingResponse(content_streaming, headers=headers)
-				
-			status_code = status.HTTP_302_FOUND
-			return RedirectResponse(url=url, status_code=status_code)
-	
 	try:
 		message = await pclient.get_messages(
 			chat_id=-1001436494509, message_ids=document.message_id)
@@ -1318,7 +1305,7 @@ async def view_cover_by_id(
 	
 	filename = f"./images/covers/{cover.file_unique_id}.jpg"
 	
-	if os.path.exists():
+	if os.path.exists(filename):
 		return FileResponse(path=filename, headers=headers)
 	
 	content = {"error": "cover not found"}
