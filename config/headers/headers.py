@@ -26,7 +26,7 @@ HTTP_HEADERS = [
 	("Permissions-Policy", ", ".join(
 		[
 			"accelerometer=()",
-			"ambient-light-sensor()",
+			"ambient-light-sensor=()",
 			"autoplay=()",
 			"battery=()",
 			"camera=()",
