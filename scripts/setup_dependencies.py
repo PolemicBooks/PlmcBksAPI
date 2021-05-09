@@ -46,6 +46,7 @@ command = [
 	"fastapi",
 	"uvicorn",
 	"tgcrypto",
+	"aiofiles",
 	"git+https://github.com/SnwMds/pyrogram#egg=Pyrogram",
 	"git+https://github.com/PolemicBooks/PlmcBks@88fd2e4fc17361cde67f8a069872677ea7ac51a4"
 ]

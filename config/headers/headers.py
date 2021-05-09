@@ -10,7 +10,62 @@ HTTP_HEADERS = [
 	("Cross-Origin-Resource-Policy", "cross-origin"),
 	("X-Content-Type-Options", "nosniff"),
 	("Referrer-Policy", "no-referrer"),
-	("Content-Security-Policy", "default-src 'none'; connect-src 'self'; img-src https://fastapi.tiangolo.com; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src https://cdn.jsdelivr.net; frame-ancestors 'none'; form-action 'none'; navigate-to 'none'"),
+	("Content-Security-Policy", "; ".join(
+		[
+			"default-src 'none'",
+			"connect-src 'self'",
+			"img-src https://fastapi.tiangolo.com",
+			"script-src 'unsafe-inline' https://cdn.jsdelivr.net",
+			"style-src https://cdn.jsdelivr.net",
+			"frame-ancestors 'none'",
+			"form-action 'none'",
+			"navigate-to 'none'"
+		]
+	)),
 	("Accept-Ranges", "none"),
-	("X-Robots-Tag", "noindex, nofollow, noarchive, nocache, noimageindex, noodp")
+	("Permissions-Policy", ", ".join(
+		[
+			"accelerometer=()",
+			"ambient-light-sensor()",
+			"autoplay=()",
+			"battery=()",
+			"camera=()",
+			"display-capture=()",
+			"document-domain=()",
+			"encrypted-media=()",
+			"execution-while-not-rendered=()",
+			"execution-while-out-of-viewport=()",
+			"fullscreen=()",
+			"geolocation=()",
+			"gyroscope=()",
+			"layout-animations=()",
+			"legacy-image-formats=()",
+			"magnetometer=()",
+			"microphone=()",
+			"midi=()",
+			"navigation-override=()",
+			"oversized-images=()",
+			"payment=()",
+			"picture-in-picture=()",
+			"publickey-credentials-get=()",
+			"sync-xhr=()",
+			"usb=()",
+			"vr=()",
+			"wake-lock=()",
+			"screen-wake-lock=()",
+			"web-share=()",
+			"xr-spatial-tracking=()",
+			"interest-cohort=()"
+		]
+	)),
+	("X-Robots-Tag", ", ".join(
+		[
+			"noindex",
+			"nofollow",
+			"noarchive",
+			"nocache",
+			"noimageindex",
+			"noodp"
+		]
+	))
 ]
