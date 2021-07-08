@@ -13,15 +13,15 @@ def create_caption(book):
 	if book.category is not None:
 		caption += f"<strong>Categoria</strong>: <em>{book.category.name}</em><br>"
 	if book.genre is not None:
-		caption += f"<strong>Gênero</strong>: <em>{book.genre}</em><br>"
+		caption += f"<strong>Gênero</strong>: <em>{', '.join(book.genre)}</em><br>"
 	if book.duration is not None:
 		caption += f"<strong>Duração</strong>: <em>" + str(datetime.timedelta(seconds=book.duration)) + "</em><br>"
 	if book.total_size is not None:
 		caption += f"<strong>Tamanho</strong>: <em>" + to_human(book.total_size) + "</em><br>"
 	if book.volumes is not None:
-		caption += f"<strong>Volumes</strong>: <em>{book.volumes}</em><br>"
+		caption += f"<strong>Volumes</strong>: <em>{book.total_volumes}</em><br>"
 	if book.chapters is not None:
-		caption += f"<strong>Capítulos</strong>: <em>{book.chapters}</em><br>"
+		caption += f"<strong>Capítulos</strong>: <em>{book.total_chapters}</em><br>"
 	if book.year is not None:
 		caption += f"<strong>Ano</strong>: <em>{book.year.name}</em><br>"
 	if book.author is not None:
@@ -30,5 +30,7 @@ def create_caption(book):
 		caption += f"<strong>Narrador</strong>: <em>{book.narrator.name}</em><br>"
 	if book.publisher is not None:
 		caption += f"<strong>Editora</strong>: <em>{book.publisher.name}</em><br>"
+	if book.message_views is not None:
+		caption += f"<strong>Visualizações</strong>: <em>{book.message_views}</em><br>"
 	
 	return caption
