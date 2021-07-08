@@ -46,13 +46,12 @@ from config.headers import headers
 # Utils
 from utils.streaming import stream_from_response
 from utils.books import create_caption
-from utils.opds import create_content
 from utils.paginations import create_pagination
 
 app = FastAPI(
 	title="PlmcBksAPI",
 	description="Interaja com o acervo de livros, audiolivros, comics e mangás.",
-	version="0.1",
+	version="0.2",
 	openapi_url="/openapi.json",
 	openapi_tags=openapi.TAGS,
 	docs_url="/",
@@ -1490,7 +1489,7 @@ def opds_get_books_by_author(
 			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
-		item += f'<content type="xhtml">{html.escape(create_content(book))}'
+		item += f'<content type="xhtml">{html.escape(create_caption(book))}'
 		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + "." + book.documents[0].file_extension if book.title is not None else "document." + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
@@ -1620,7 +1619,7 @@ def opds_get_books_by_artist(
 			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
-		item += f'<content type="xhtml">{html.escape(create_content(book))}'
+		item += f'<content type="xhtml">{html.escape(create_caption(book))}'
 		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + "." + book.documents[0].file_extension if book.title is not None else "document." + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
@@ -1750,7 +1749,7 @@ def opds_get_books_by_narrator(
 			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
-		item += f'<content type="xhtml">{html.escape(create_content(book))}'
+		item += f'<content type="xhtml">{html.escape(create_caption(book))}'
 		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + "." + book.documents[0].file_extension if book.title is not None else "document." + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
@@ -1880,7 +1879,7 @@ def opds_get_books_by_publisher(
 			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
-		item += f'<content type="xhtml">{html.escape(create_content(book))}'
+		item += f'<content type="xhtml">{html.escape(create_caption(book))}'
 		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + "." + book.documents[0].file_extension if book.title is not None else "document." + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
@@ -2010,7 +2009,7 @@ def opds_get_books_by_category(
 			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
-		item += f'<content type="xhtml">{html.escape(create_content(book))}'
+		item += f'<content type="xhtml">{html.escape(create_caption(book))}'
 		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + "." + book.documents[0].file_extension if book.title is not None else "document." + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
@@ -2140,7 +2139,7 @@ def opds_get_books_by_type(
 			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
-		item += f'<content type="xhtml">{html.escape(create_content(book))}'
+		item += f'<content type="xhtml">{html.escape(create_caption(book))}'
 		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + "." + book.documents[0].file_extension if book.title is not None else "document." + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
@@ -2270,7 +2269,7 @@ def opds_get_books_by_year(
 			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
-		item += f'<content type="xhtml">{html.escape(create_content(book))}'
+		item += f'<content type="xhtml">{html.escape(create_caption(book))}'
 		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + "." + book.documents[0].file_extension if book.title is not None else "document." + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
@@ -2351,7 +2350,7 @@ def opds_search_books(
 			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
-		item += f'<content type="xhtml">{html.escape(create_content(book))}'
+		item += f'<content type="xhtml">{html.escape(create_caption(book))}'
 		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + "." + book.documents[0].file_extension if book.title is not None else "document." + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
@@ -2423,7 +2422,7 @@ def opds_recent_books(
 			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
-		item += f'<content type="xhtml">{html.escape(create_content(book))}'
+		item += f'<content type="xhtml">{html.escape(create_caption(book))}'
 		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + "." + book.documents[0].file_extension if book.title is not None else "document." + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
@@ -2494,7 +2493,7 @@ def opds_old_books(
 			item += f'\n  <category scheme="http://www.bisg.org/standards/bisac_subject/index.html"\n		term="{book.category.id}"\n		label="{html.escape(book.category.name)}"/>'
 		if book.type is not None:
 			item += f"\n  <summary>{book.type.name}</summary>"
-		item += f'<content type="xhtml">{html.escape(create_content(book))}'
+		item += f'<content type="xhtml">{html.escape(create_caption(book))}'
 		item += html.escape(f'<strong>Download</strong>: <em><a href="{urls.API_URL + "/download/" + str(book.documents[0].id)}">{book.title + "." + book.documents[0].file_extension if book.title is not None else "document." + book.documents[0].file_extension}</a></em>')
 		item += "</content>\n</entry>"
 		items.append(item)
