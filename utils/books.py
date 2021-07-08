@@ -18,9 +18,9 @@ def create_caption(book):
 		caption += f"<strong>Duração</strong>: <em>" + str(datetime.timedelta(seconds=book.duration)) + "</em><br>"
 	if book.total_size is not None:
 		caption += f"<strong>Tamanho</strong>: <em>" + to_human(book.total_size) + "</em><br>"
-	if book.volumes is not None:
+	if book.total_volumes is not None:
 		caption += f"<strong>Volumes</strong>: <em>{book.total_volumes}</em><br>"
-	if book.chapters is not None:
+	if book.total_chapters is not None:
 		caption += f"<strong>Capítulos</strong>: <em>{book.total_chapters}</em><br>"
 	if book.year is not None:
 		caption += f"<strong>Ano</strong>: <em>{book.year.name}</em><br>"
